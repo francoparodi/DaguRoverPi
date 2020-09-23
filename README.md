@@ -3,6 +3,7 @@
 Java to Python porting of project [RaspDaguRover](https://github.com/francoparodi/RaspiDaguRover) 
 
 ## Prerequisites
+[Motion](https://motion-project.github.io/) software to be able to stream camera content. 
 
 ## Installing
 

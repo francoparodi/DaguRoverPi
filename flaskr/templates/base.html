@@ -13,9 +13,9 @@
     <!-- DARK MODE -->
     <!-- <link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.css"> -->
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='flask_login_sample.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
 
-    <title>Flask Alchemy Sample</title>
+    <title>Dagu Rover</title>
 </head>
 <body>
 
@@ -48,6 +48,9 @@
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a class="nav-item nav-link" href="{{ url_for('view.users') }}" data-toggle="tooltip" title="Users">
                                         Users
+                                    </a>
+                                    <a class="nav-item nav-link" href="{{ url_for('view.setup') }}" data-toggle="tooltip" title="Setup">
+                                        Setup
                                     </a>
                                 </div>
                             </li>

@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from config import Config, Logger
-from flaskr.models import db, User
+from flaskr.models import db, User, Setup
 from flaskr import create_app
 
 try:
@@ -24,24 +24,35 @@ try:
     app = create_app()
     with app.test_request_context():
         app.config.from_object(Config)
+
         message = '{0} Initializing app...'.format(log_type)
         Logger.logger.debug(message)
         db.init_app(app)
+        
         message = '{0} Creating DB {1}'.format(log_type, database_file)
         Logger.logger.debug(message)
         db.create_all()
+        
         message = '{0} Populate DB {1}'.format(log_type, database_file)
         Logger.logger.debug(message)
+        
+        # Users
         message = '{0} Adding admin'.format(log_type)
         Logger.logger.debug(message)
         u = User(username="admin", email="admin@localhost.com", role="ADMIN", enabled=1)
         u.set_password_hash("admin")
         db.session.add(u)
+
         message = '{0} Adding user'.format(log_type)
         Logger.logger.debug(message)
         u = User(username="user", email="user@localhost.com",  role="USER", enabled=1)
         u.set_password_hash("user")
         db.session.add(u)
+        
+        # Setup
+        s = Setup(camera_enabled=1)
+        db.session.add(s)
+
         message = '{0} Commit'.format(log_type)
         Logger.logger.debug(message)
         db.session.commit()

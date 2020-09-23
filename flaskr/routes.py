@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_user, logout_user, login_required
 
 from flaskr.forms import LoginForm
-from flaskr.models import db, User
+from flaskr.models import db, User, Setup
 
 view = Blueprint("view", __name__)
 
@@ -46,6 +46,14 @@ def users():
     users = User.query.all()
     return render_template("users.html", users=users)
 
+@view.route("/setup")
+@login_required
+def setup():
+    if not current_user.role == 'ADMIN':
+        return render_template("homepage.html")
+    setup = Setup.query.filter_by(id=1).first()
+    return render_template("setup.html", setup=setup)
+
 @view.route("/new")
 @login_required
 def new():
@@ -69,9 +77,9 @@ def remove(id):
     user = User.query.filter_by(id=id).first()
     return render_template("remove.html", user=user)
 
-@view.route("/add", methods=["POST"])
+@view.route("/add_user", methods=["POST"])
 @login_required
-def insert():
+def add_user():
     if not current_user.role == 'ADMIN':
         return render_template("homepage.html")
     try:
@@ -96,9 +104,9 @@ def insert():
         return redirect("/new")
     return redirect("/users")
 
-@view.route("/update", methods=["POST"])
+@view.route("/update_user", methods=["POST"])
 @login_required
-def update():
+def update_user():
     if not current_user.role == 'ADMIN':
         return render_template("homepage.html")
     try:
@@ -141,3 +149,21 @@ def delete():
         flash(msg)
         print(e)
     return redirect("/users")
+
+@view.route("/save_setup", methods=["POST"])
+@login_required
+def save_setup():
+    if not current_user.role == 'ADMIN':
+        return render_template("homepage.html")
+    try:
+        camera_enabled = request.form.get("camera_enabled")
+        setup = Setup.query.filter_by(id=1).first()
+        if camera_enabled == 'on':
+            setup.camera_enabled = 1
+        db.session.commit()
+    except Exception as e:
+        msg = "Failed to save setup"
+        flash(msg)
+        print(e)
+        return redirect("/setup")
+    return render_template("homepage.html", user=current_user)

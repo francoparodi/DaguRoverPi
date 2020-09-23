@@ -18,11 +18,11 @@
 </div>
 
     <div class="container content-container">
-        <form method="POST" action="/update">
+        <form method="POST" action="/update_user">
             <div class="form-group">
                 <label for="newUsername">Username</label>
                 <input type="hidden" class="form-control" name="oldUsername" value="{{user.username}}" id="oldUsername" aria-describedby="oldUsername">
-                <input type="text" class="form-control" name="newUsername" value="{{user.username}}" id="newUsername" aria-describedby="newUsername" placeholder="Enter name" required="true">
+                <input type="text" class="form-control" name="newUsername" value="{{user.username}}" id="newUsername" aria-describedby="newUsername" placeholder="Enter name" required="true" readonly="true">
                 <label for="password">Password</label>
                 <input type="password" class="form-control" name="password" value="{{user.password}}" id="password" aria-describedby="password" placeholder="Enter password" required="true">
                 <input type="hidden" class="form-control" name="oldPassword" value="{{user.password}}" id="oldPassword" aria-describedby="oldPassword">
@@ -39,7 +39,7 @@
                 <input type="checkbox" class="custom-control-input" name="enabled" id="enabled" {% if user.enabled == 1 %} checked {% endif %}>
                 <label class="custom-control-label" for="enabled">Enabled</label>
               </div>
-            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="submit" class="btn btn-primary">Save</button>
             <a class="btn btn-primary" href="{{ url_for('view.users') }}" role="button">Back</a>
         </form>
     </div>

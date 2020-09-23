@@ -29,3 +29,11 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
+class Setup(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    camera_enabled = db.Column(db.Boolean, default=False, unique=False, nullable=False)
+
+    def __repr__(self):
+        return f"Setup('{ self.id }', '{ self.created_at }', '{ self.camera_enabled }')"
