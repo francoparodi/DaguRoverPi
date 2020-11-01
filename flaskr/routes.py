@@ -11,7 +11,8 @@ view = Blueprint("view", __name__)
 @view.route("/")
 def homepage():
     if current_user.is_authenticated:
-        return render_template("homepage.html", user=current_user)
+        setup = Setup.query.filter_by(id=1).first()
+        return render_template("homepage.html", user=current_user, setup=setup)
     return redirect(url_for('view.login'))
 
 @view.route("/login", methods=["GET", "POST"])
@@ -158,6 +159,7 @@ def save_setup():
     try:
         camera_enabled = request.form.get("camera_enabled")
         setup = Setup.query.filter_by(id=1).first()
+        setup.camera_enabled = 0
         if camera_enabled == 'on':
             setup.camera_enabled = 1
         db.session.commit()
@@ -166,4 +168,4 @@ def save_setup():
         flash(msg)
         print(e)
         return redirect("/setup")
-    return render_template("homepage.html", user=current_user)
+    return render_template("homepage.html", user=current_user, setup=setup)

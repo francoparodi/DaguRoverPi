@@ -21,8 +21,8 @@
         <form method="POST" action="/save_setup">
           <input type="text" name="camera_ip" class="form-control" id="camera_ip" placeholder="Cam address (http://localhost:8081)">
             <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" name="enabled" id="enabled" {% if setup.camera_enabled == 1 %} checked {% endif %}>
-                <label class="custom-control-label" for="enabled">Camera enabled</label>
+                <input type="checkbox" class="custom-control-input" name="camera_enabled" id="camera_enabled" {% if setup.camera_enabled == 1 %} checked {% endif %}>
+                <label class="custom-control-label" for="camera_enabled">Camera enabled</label>
             </div>
             <button type="submit" class="btn btn-primary">Save</button>
             <a class="btn btn-primary" href="{{ url_for('view.homepage') }}" role="button">Back</a>

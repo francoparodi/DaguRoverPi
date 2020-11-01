@@ -7,9 +7,9 @@
     <div class="row no-gutters">
         <div class="col-md-9 order-md-2">
             <p>Welcome {{ user.username }}</p>
-            <iframe src="http://localhost:8081" width="324" height="244">
-
-            </iframe>
+            {% if setup.camera_enabled == 1 %}
+                <iframe src="http://localhost:8081" width="324" height="244"/>
+            {% endif %}
         </div>
     </div>    
 </div>
