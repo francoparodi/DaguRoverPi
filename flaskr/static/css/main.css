@@ -8,13 +8,26 @@ html, body {
 }
 
 .navbar-container {
-    max-width: 900px;
+    max-width: 800px;
     padding: 10px, 0px, 10px, 0px;
 }
 
 .content-container {
-    max-width: 900px;
+    max-width: 500px;
     margin-top: 20px;
     margin-bottom: 20px;
     padding: 0px;
+}
+
+.img-logo {
+    width: 32px;
+}
+
+.camera {
+    width: 324px;
+    height: 244px;
+}
+
+.speed-slider {
+    transform: rotate(270deg);
 }

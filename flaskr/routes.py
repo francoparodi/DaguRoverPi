@@ -5,14 +5,36 @@ from flask_login import current_user, login_user, logout_user, login_required
 
 from flaskr.forms import LoginForm
 from flaskr.models import db, User, Setup
+from flaskr.rover import Rover as rover
 
 view = Blueprint("view", __name__)
 
-@view.route("/")
+@view.route("/", methods=["GET", "POST"])
 def homepage():
     if current_user.is_authenticated:
+    
+        if request.form.get('button') == 'forward':
+            print("forward button pressed")
+            rover.status = request.form.get('forward')
+        if request.form.get('button') == 'backward':
+            print("backward button pressed")
+            rover.status = request.form.get('backward')
+        if request.form.get('button') == 'clockwise':
+            print("clockwise button pressed")
+            rover.status = request.form.get('clockwise')
+        if request.form.get('button') == 'counter-clockwise':
+            print("counter-clockwise button pressed")
+            rover.status = request.form.get('counter-clockwise')
+        if request.form.get('button') == 'stop':
+            print("stop button pressed")
+            rover.status = request.form.get('stop')
+        if request.form.get('speedSlider'):
+            print(request.form.get('speedSlider'))
+            rover.speed = request.form.get('speedSlider')
+        
         setup = Setup.query.filter_by(id=1).first()
-        return render_template("homepage.html", user=current_user, setup=setup)
+        return render_template("homepage.html", user=current_user, setup=setup, rover=rover)
+
     return redirect(url_for('view.login'))
 
 @view.route("/login", methods=["GET", "POST"])
@@ -168,4 +190,11 @@ def save_setup():
         flash(msg)
         print(e)
         return redirect("/setup")
-    return render_template("homepage.html", user=current_user, setup=setup)
+    return render_template("homepage.html", user=current_user, setup=setup, rover=rover)
+
+@view.route("/command", methods=["POST"])
+@login_required
+def command():
+
+    
+    return render_template("homepage.html", user=current_user, setup=setup, rover=rover)
