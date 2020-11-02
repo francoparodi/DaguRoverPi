@@ -179,11 +179,9 @@ def save_setup():
     if not current_user.role == 'ADMIN':
         return render_template("homepage.html")
     try:
-        camera_enabled = request.form.get("camera_enabled")
+        camera_ip = request.form.get("camera_ip")
         setup = Setup.query.filter_by(id=1).first()
-        setup.camera_enabled = 0
-        if camera_enabled == 'on':
-            setup.camera_enabled = 1
+        setup.camera_ip = camera_ip
         db.session.commit()
     except Exception as e:
         msg = "Failed to save setup"

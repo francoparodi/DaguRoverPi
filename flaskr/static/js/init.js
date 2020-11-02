@@ -1,8 +1,6 @@
-function speedSliderEvents(speedSlider, speedSliderDiv) {
-    var slide = document.getElementById(speedSlider),
-    sliderDiv = document.getElementById(speedSliderDiv);
+function speedSliderEvents(speedSlider) {
+    var slide = document.getElementById(speedSlider);
     slide.onchange = function() {
-        sliderDiv.innerHTML = this.value;
         $.post({
                 url: '/',
                 data: $('form').serialize(),

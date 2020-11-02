@@ -2,46 +2,52 @@
 
 {% block content %}
 
-<div class="container content-container">
-    <div class="mt-3">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-danger" role="alert">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ message }}
+<div class="container text-center mt-3">
+    <div class="row no-gutters justify-content-center">
+        <div class="col-md-4">
+
+            <div class="container">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-danger" role="alert">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
             </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+
+            <form method="POST" action="/update_user">
+                <div class="form-group">
+                    <label for="newUsername">Username</label>
+                    <input type="hidden" class="form-control" name="oldUsername" value="{{user.username}}" id="oldUsername" aria-describedby="oldUsername">
+                    <input type="text" class="form-control" name="newUsername" value="{{user.username}}" id="newUsername" aria-describedby="newUsername" placeholder="Enter name" required="true" readonly="true">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" name="password" value="{{user.password}}" id="password" aria-describedby="password" placeholder="Enter password" required="true">
+                    <input type="hidden" class="form-control" name="oldPassword" value="{{user.password}}" id="oldPassword" aria-describedby="oldPassword">
+
+                    <label for="role">Role</label>
+                    <select type="text" class="form-control" id="role" name="role" >
+                        <option value="ADMIN" {% if user.role == 'ADMIN' %} selected {% endif %}>ADMIN</option>
+                        <option value="USER" {% if user.role == 'USER' %} selected {% endif %}>USER</option>
+                    </select>                
+                    <label for="email">Email</label>
+                    <input type="text" class="form-control" name="email" value="{{user.email}}" id="email" aria-describedby="email" placeholder="Enter email" required="true">
+                </div>
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" name="enabled" id="enabled" {% if user.enabled == 1 %} checked {% endif %}>
+                    <label class="custom-control-label" for="enabled">Enabled</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a class="btn btn-primary" href="{{ url_for('view.users') }}" role="button">Back</a>
+            </form>
+
+
+        </div>
     </div>
 </div>
 
-    <div class="container content-container">
-        <form method="POST" action="/update_user">
-            <div class="form-group">
-                <label for="newUsername">Username</label>
-                <input type="hidden" class="form-control" name="oldUsername" value="{{user.username}}" id="oldUsername" aria-describedby="oldUsername">
-                <input type="text" class="form-control" name="newUsername" value="{{user.username}}" id="newUsername" aria-describedby="newUsername" placeholder="Enter name" required="true" readonly="true">
-                <label for="password">Password</label>
-                <input type="password" class="form-control" name="password" value="{{user.password}}" id="password" aria-describedby="password" placeholder="Enter password" required="true">
-                <input type="hidden" class="form-control" name="oldPassword" value="{{user.password}}" id="oldPassword" aria-describedby="oldPassword">
-
-                <label for="role">Role</label>
-                <select type="text" class="form-control" id="role" name="role" >
-                    <option value="ADMIN" {% if user.role == 'ADMIN' %} selected {% endif %}>ADMIN</option>
-                    <option value="USER" {% if user.role == 'USER' %} selected {% endif %}>USER</option>
-                </select>                
-                <label for="email">Email</label>
-                <input type="text" class="form-control" name="email" value="{{user.email}}" id="email" aria-describedby="email" placeholder="Enter email" required="true">
-            </div>
-            <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" name="enabled" id="enabled" {% if user.enabled == 1 %} checked {% endif %}>
-                <label class="custom-control-label" for="enabled">Enabled</label>
-              </div>
-            <button type="submit" class="btn btn-primary">Save</button>
-            <a class="btn btn-primary" href="{{ url_for('view.users') }}" role="button">Back</a>
-        </form>
-    </div>
 
 {% endblock %}
