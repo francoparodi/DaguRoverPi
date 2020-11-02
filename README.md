@@ -5,6 +5,30 @@ Java to Python porting of project [RaspDaguRover](https://github.com/francoparod
 ## Prerequisites
 [Motion](https://motion-project.github.io/) software to be able to stream camera content. 
 
+**Quick start** (maybe on Debian-like distro):
+
+installation:
+```sh
+sudo apt install motion
+```
+
+configuration:
+```sh
+sudo nano /etc/motion/motion.conf
+```
+
+start:
+```sh
+sudo motion
+```
+
+logs:
+```sh
+tail -f /var/log/motion
+```
+
+Look for motion_sample.conf in this project.
+
 ## Installing
 
 From the project root:

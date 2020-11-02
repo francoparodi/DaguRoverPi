@@ -29,5 +29,5 @@ html, body {
 }
 
 .speed-slider {
-    transform: rotate(270deg);
+    width: 100%;
 }
