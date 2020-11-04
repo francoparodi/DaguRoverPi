@@ -1,3 +1,4 @@
+import sys, atexit, time
 from flask import current_app as app
 
 from flask import Blueprint, render_template, redirect, url_for, flash, request
@@ -7,30 +8,40 @@ from flaskr.forms import LoginForm
 from flaskr.models import db, User, Setup
 from flaskr.rover import Rover as rover
 
+try:
+    import RPi.GPIO as GPIO
+except (RuntimeError, ModuleNotFoundError):
+    import fake_rpi
+    GPIO = fake_rpi.RPi.GPIO
+    sys.modules['RPi'] = fake_rpi.RPi
+    sys.modules['RPi.GPIO'] = fake_rpi.RPi.GPIO
+    sys.modules['smbus'] = fake_rpi.smbus
+
 view = Blueprint("view", __name__)
+
+GPIO.setmode(GPIO.BOARD)
+#pin 11
+GPIO.setup(11,GPIO.OUT)
+#pin 11, 50Hz pulse
+servo = GPIO.PWM(11,50)
+servo.start(0)
+time.sleep(2)
 
 @view.route("/", methods=["GET", "POST"])
 def homepage():
     if current_user.is_authenticated:
     
-        if request.form.get('button') == 'forward':
-            print("forward button pressed")
-            rover.status = request.form.get('forward')
-        if request.form.get('button') == 'backward':
-            print("backward button pressed")
-            rover.status = request.form.get('backward')
-        if request.form.get('button') == 'clockwise':
-            print("clockwise button pressed")
-            rover.status = request.form.get('clockwise')
-        if request.form.get('button') == 'counter-clockwise':
-            print("counter-clockwise button pressed")
-            rover.status = request.form.get('counter-clockwise')
-        if request.form.get('button') == 'stop':
-            print("stop button pressed")
-            rover.status = request.form.get('stop')
-        if request.form.get('speedSlider'):
-            print(request.form.get('speedSlider'))
-            rover.speed = request.form.get('speedSlider')
+        buttonPressed = request.form.get('button') 
+        if buttonPressed != None :
+            print("pressed {0}".format(buttonPressed))
+            rover.status = buttonPressed
+        
+        speedSlider = request.form.get('speedSlider')
+        if speedSlider != None :
+            print("speedSlider set to {0}".format(speedSlider) )
+            rover.speed = speedSlider
+        
+        execute_command()
         
         setup = Setup.query.filter_by(id=1).first()
         return render_template("homepage.html", user=current_user, setup=setup, rover=rover)
@@ -190,9 +201,18 @@ def save_setup():
         return redirect("/setup")
     return render_template("homepage.html", user=current_user, setup=setup, rover=rover)
 
-@view.route("/command", methods=["POST"])
-@login_required
-def command():
+def execute_command():
+    # READ ROVER VALUES AND EXECUTE 
+    print('Speed:{0} Status:{1}'.format(rover.speed, rover.status))
+    #servo.ChangeDutyCycle(dutyCycle)
+    #time.sleep(1)
+    #servo.ChangeDutyCycle(0)
+    #time.sleep(1)
 
-    
-    return render_template("homepage.html", user=current_user, setup=setup, rover=rover)
+def cleanUp():
+    print('Safe terminating.')
+    rover.status = 'stop'
+    rover.speed = 0
+    GPIO.cleanup()
+
+atexit.register(cleanUp)
