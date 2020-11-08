@@ -7,25 +7,11 @@ from flask_login import current_user, login_user, logout_user, login_required
 from flaskr.forms import LoginForm
 from flaskr.models import db, User, Setup
 from flaskr.rover import Rover as rover
-
-try:
-    import RPi.GPIO as GPIO
-except (RuntimeError, ModuleNotFoundError):
-    import fake_rpi
-    GPIO = fake_rpi.RPi.GPIO
-    sys.modules['RPi'] = fake_rpi.RPi
-    sys.modules['RPi.GPIO'] = fake_rpi.RPi.GPIO
-    sys.modules['smbus'] = fake_rpi.smbus
+from flaskr import rover_controller
 
 view = Blueprint("view", __name__)
 
-GPIO.setmode(GPIO.BOARD)
-#pin 11
-GPIO.setup(11,GPIO.OUT)
-#pin 11, 50Hz pulse
-servo = GPIO.PWM(11,50)
-servo.start(0)
-time.sleep(2)
+rover_controller.gpioSetup()
 
 @view.route("/", methods=["GET", "POST"])
 def homepage():
@@ -34,14 +20,12 @@ def homepage():
         buttonPressed = request.form.get('button') 
         if buttonPressed != None :
             print("pressed {0}".format(buttonPressed))
-            rover.status = buttonPressed
+            execute_command('status', buttonPressed)
         
         speedSlider = request.form.get('speedSlider')
         if speedSlider != None :
             print("speedSlider set to {0}".format(speedSlider) )
-            rover.speed = speedSlider
-        
-        execute_command()
+            execute_command('speed', speedSlider)
         
         setup = Setup.query.filter_by(id=1).first()
         return render_template("homepage.html", user=current_user, setup=setup, rover=rover)
@@ -70,6 +54,7 @@ def login():
 @view.route("/logout")
 def logout():
     logout_user()
+    rover_controller.cleanUp()
     return redirect(url_for('view.homepage'))
 
 @view.route("/users")
@@ -201,18 +186,24 @@ def save_setup():
         return redirect("/setup")
     return render_template("homepage.html", user=current_user, setup=setup, rover=rover)
 
-def execute_command():
-    # READ ROVER VALUES AND EXECUTE 
-    print('Speed:{0} Status:{1}'.format(rover.speed, rover.status))
-    #servo.ChangeDutyCycle(dutyCycle)
-    #time.sleep(1)
-    #servo.ChangeDutyCycle(0)
-    #time.sleep(1)
-
-def cleanUp():
-    print('Safe terminating.')
-    rover.status = 'stop'
-    rover.speed = 0
-    GPIO.cleanup()
-
-atexit.register(cleanUp)
+def execute_command(status, value): 
+    print('Status:{0} Value{1}'.format(status, value))
+    if (status == 'button'):
+        if (value == 'start'):
+            rover_controller.startMotors()
+        elif (value == 'stop'):
+            rover_controller.stopMotors()
+        elif (value == 'forward'):
+            rover_controller.setLeftMotorsDirection(value)
+            rover_controller.setRightMotorsDirection(value)
+        elif (value == 'backward'):
+            rover_controller.setLeftMotorsDirection(value)
+            rover_controller.setRightMotorsDirection(value)
+        elif (value == 'clockwise'):
+            rover_controller.setLeftMotorsDirection('forward')
+            rover_controller.setRightMotorsDirection('backward')
+        elif (value == 'counter-clockwise'):
+            rover_controller.setLeftMotorsDirection('backward')
+            rover_controller.setRightMotorsDirection('forward')
+    else:
+        rover_controller.setSpeed(value)
