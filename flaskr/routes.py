@@ -1,4 +1,4 @@
-import sys, atexit, time
+import atexit
 from flask import current_app as app
 
 from flask import Blueprint, render_template, redirect, url_for, flash, request
@@ -19,13 +19,11 @@ def homepage():
     
         buttonPressed = request.form.get('button') 
         if buttonPressed != None :
-            print("pressed {0}".format(buttonPressed))
-            execute_command('status', buttonPressed)
+            execute_command('change_move', buttonPressed)
         
         speedSlider = request.form.get('speedSlider')
         if speedSlider != None :
-            print("speedSlider set to {0}".format(speedSlider) )
-            execute_command('speed', speedSlider)
+            execute_command('change_speed', speedSlider)
         
         setup = Setup.query.filter_by(id=1).first()
         return render_template("homepage.html", user=current_user, setup=setup, rover=rover)
@@ -186,9 +184,9 @@ def save_setup():
         return redirect("/setup")
     return render_template("homepage.html", user=current_user, setup=setup, rover=rover)
 
-def execute_command(status, value): 
-    print('Status:{0} Value{1}'.format(status, value))
-    if (status == 'button'):
+def execute_command(command, value): 
+    print('Command:{0} Value:{1}'.format(command, value))
+    if (command == 'change_move'):
         if (value == 'start'):
             rover_controller.startMotors()
         elif (value == 'stop'):
@@ -205,5 +203,14 @@ def execute_command(status, value):
         elif (value == 'counter-clockwise'):
             rover_controller.setLeftMotorsDirection('backward')
             rover_controller.setRightMotorsDirection('forward')
-    else:
+    elif (command == 'change_speed'):
         rover_controller.setSpeed(value)
+    else:
+        print('Unknown command')
+
+# Safe terminating
+def cleanUp():  
+    print('Safe terminating')
+    rover_controller.cleanUp()
+
+atexit.register(cleanUp)

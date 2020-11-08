@@ -1,4 +1,4 @@
-import time, atexit
+import time
 from flaskr.rover import Rover as rover
 
 def gpioSetup():
@@ -41,17 +41,17 @@ def stopMotors():
     rover.leftMotors.stop()
     rover.rightMotors.stop()
 
-def startMotors(speed):
-    rover.leftMotors.start(speed)
-    rover.rightMotors.start(speed)
+def startMotors():
+    rover.leftMotors.start(rover.speed)
+    rover.rightMotors.start(rover.speed)
 
 def setSpeed(speed):
-    rover.leftMotors.ChangeDutyCycle(speed)
-    rover.rightMotors.ChangeDutyCycle(speed)
+    rover.speed = speed
+    rover.leftMotors.ChangeDutyCycle(rover.speed)
+    rover.rightMotors.ChangeDutyCycle(rover.speed)
 
 # Safe terminating
 def cleanUp():  
     stopMotors()
+    setSpeed(0)
     rover.GPIO.cleanup()
-
-atexit.register(cleanUp)
