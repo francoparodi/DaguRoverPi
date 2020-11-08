@@ -1,5 +1,13 @@
-import RPi.GPIO as GPIO
-import time
+import time, sys, atexit
+
+try:
+    import RPi.GPIO as GPIO
+except (RuntimeError, ModuleNotFoundError):
+    import fake_rpi
+    GPIO = fake_rpi.RPi.GPIO
+    sys.modules['RPi'] = fake_rpi.RPi
+    sys.modules['RPi.GPIO'] = fake_rpi.RPi.GPIO
+    sys.modules['smbus'] = fake_rpi.smbus
 
 leftFrontMotor = 23 # GPIO23, pin16
 leftBackMotor = 24 # GPIO24, pin18
@@ -96,5 +104,12 @@ def demo():
     time.sleep(1)
 
     GPIO.cleanup()
+
+# Safa terminating
+def cleanUp():  
+    stopMotors()
+    GPIO.cleanup()
+
+atexit.register(cleanUp)
 
 demo()
