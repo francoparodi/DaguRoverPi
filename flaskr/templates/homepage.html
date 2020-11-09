@@ -17,10 +17,16 @@
                 <form method="POST" action="/">
                     
                     <div class="form-group">
-                        <label  for="speedSlider">Speed</label>
                         <input title="Speed" id="speedSlider" class="speed-slider" type="range" min="0" max="100" step="10" value="{{ rover.speed }}" name="speedSlider" />
                         <script>
-                            speedSliderEvents('speedSlider');
+                            sliderEvents('speedSlider', '/');
+                        </script>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="button" name="next" id="next" value="Next"/>
+                        <script>
+                            buttonEvents('next', '/');
                         </script>
                     </div>
 

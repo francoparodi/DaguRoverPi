@@ -17,6 +17,10 @@ rover_controller.gpioSetup()
 def homepage():
     if current_user.is_authenticated:
     
+        buttonNextPressed = request.form.get('next')
+        if buttonNextPressed != None :
+            print('Next pressed')
+
         buttonPressed = request.form.get('button') 
         if buttonPressed != None :
             execute_command('change_move', buttonPressed)
