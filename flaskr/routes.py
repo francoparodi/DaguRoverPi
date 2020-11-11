@@ -17,13 +17,9 @@ rover_controller.gpioSetup()
 def homepage():
     if current_user.is_authenticated:
     
-        buttonNextPressed = request.form.get('next')
-        if buttonNextPressed != None :
-            print('Next pressed')
-
-        buttonPressed = request.form.get('button') 
-        if buttonPressed != None :
-            execute_command('change_move', buttonPressed)
+        commandRequest = request.form.get('command')
+        if commandRequest != None :
+            execute_command('change_move', commandRequest)
         
         speedSlider = request.form.get('speedSlider')
         if speedSlider != None :

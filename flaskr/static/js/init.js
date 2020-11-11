@@ -14,12 +14,12 @@ function sliderEvents(elementId, toUrl) {
     }
 }
 
-function buttonEvents(elementId, toUrl) {
+function buttonEvents(elementId, toUrl, command) {
     var element = document.getElementById(elementId);
     element.onclick = function() {
         $.post({
                 url: toUrl,
-                data: $('form').serialize(),
+                data: 'command='+command,
                 success: function(response){
                     console.log(response);
                 },
