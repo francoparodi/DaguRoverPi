@@ -11,7 +11,8 @@ function sliderEvents(elementId, toUrl) {
                     console.log(error);
                 }
             });
-    }
+            $("#divStatusId").load(" #divStatusId > *");
+        }
 }
 
 function buttonEvents(elementId, toUrl, command) {
@@ -27,5 +28,6 @@ function buttonEvents(elementId, toUrl, command) {
                     console.log(error);
                 }
             });
+            $("#divStatusId").load(" #divStatusId > *");
     }
 }

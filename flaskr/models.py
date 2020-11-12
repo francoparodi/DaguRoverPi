@@ -34,6 +34,7 @@ class Setup(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime, default=datetime.now)
     camera_ip = db.Column(db.String(128), unique=False, default='')
+    gps_interval = db.Column(db.Integer, default=0)
 
     def __repr__(self):
-        return f"Setup('{ self.id }', '{ self.created_at }', '{ self.camera_enabled }')"
+        return f"Setup('{ self.id }', '{ self.created_at }', '{ self.camera_enabled }', '{ self.gps_interval }')"

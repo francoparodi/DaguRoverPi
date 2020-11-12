@@ -174,8 +174,10 @@ def save_setup():
         return render_template("homepage.html")
     try:
         camera_ip = request.form.get("camera_ip")
+        gps_interval = request.form.get("gps_interval")
         setup = Setup.query.filter_by(id=1).first()
         setup.camera_ip = camera_ip
+        setup.gps_interval = int(gps_interval)
         db.session.commit()
     except Exception as e:
         msg = "Failed to save setup"
@@ -189,20 +191,26 @@ def execute_command(command, value):
     if (command == 'change_move'):
         if (value == 'start'):
             rover_controller.startMotors()
+            rover_controller.rover.status = "start"
         elif (value == 'stop'):
             rover_controller.stopMotors()
+            rover_controller.rover.status = "stop"
         elif (value == 'forward'):
             rover_controller.setLeftMotorsDirection(value)
             rover_controller.setRightMotorsDirection(value)
+            rover_controller.rover.status = "forward"
         elif (value == 'backward'):
             rover_controller.setLeftMotorsDirection(value)
             rover_controller.setRightMotorsDirection(value)
+            rover_controller.rover.status = "backward"
         elif (value == 'clockwise'):
             rover_controller.setLeftMotorsDirection('forward')
             rover_controller.setRightMotorsDirection('backward')
+            rover_controller.rover.status = "turning clockwise"
         elif (value == 'counter-clockwise'):
             rover_controller.setLeftMotorsDirection('backward')
             rover_controller.setRightMotorsDirection('forward')
+            rover_controller.rover.status = "turning counter-clockwise"
     elif (command == 'change_speed'):
         rover_controller.setSpeed(value)
     else:
