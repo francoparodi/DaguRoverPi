@@ -220,7 +220,7 @@ def execute_command(command, value):
             rover_controller.setRightMotorsDirection('FORWARD')
             rover_controller.rover.status = value
     elif (command == 'CHANGE_POWER'):
-        rover_controller.setPower(value)
+        rover_controller.setPower(int(value))
     else:
         print('Unknown command')
 
