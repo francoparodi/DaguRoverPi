@@ -12,12 +12,12 @@ class Rover():
 
     power = 0
     status = 'STOP' # values: 'STOP', 'FORWARD', 'BACKWARD', 'CLOCKWISE', 'COUNTER-CLOCKWISE'
-    leftFrontMotor = 23 # GPIO23, pin16
-    leftBackMotor = 24 # GPIO24, pin18
-    rightFrontMotor = 17 # GPIO17, pin11
-    rightBackMotor = 27 # GPIO27, pin13
-    leftSideMotorsEnabling = 18 # GPIO18, pin12
-    rightSideMotorsEnabling = 22 # GPIO22, pin15
+    leftFrontMotor = 23 # GPIO23, pin16 Blue
+    leftBackMotor = 24 # GPIO24, pin18 Green
+    rightFrontMotor = 17 # GPIO17, pin11 Brown
+    rightBackMotor = 27 # GPIO27, pin13 Violet
+    leftSideMotorsEnabling = 18 # GPIO18, pin12 PWM Yellow
+    rightSideMotorsEnabling = 12 # GPIO12, pin32 PWM White
     frequency = 50
     leftMotors = None
     rightMotors = None
