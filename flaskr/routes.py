@@ -197,27 +197,32 @@ def save_setup():
 def execute_command(command, value): 
     print('Command:{0} Value:{1}'.format(command, value))
     if (command == 'CHANGE_STATUS'):
-        if (value == 'START'):
-            rover_controller.startMotors()
-            rover_controller.rover.status = value
-        elif (value == 'STOP'):
+        if (value == 'STOP'):
             rover_controller.stopMotors()
             rover_controller.rover.status = value
         elif (value == 'FORWARD'):
+            rover_controller.stopMotors()
             rover_controller.setLeftMotorsDirection(value)
             rover_controller.setRightMotorsDirection(value)
+            rover_controller.startMotors()
             rover_controller.rover.status = value
         elif (value == 'BACKWARD'):
+            rover_controller.stopMotors() 
             rover_controller.setLeftMotorsDirection(value)
             rover_controller.setRightMotorsDirection(value)
+            rover_controller.startMotors()
             rover_controller.rover.status = value
         elif (value == 'CLOCKWISE'):
+            rover_controller.stopMotors() 
             rover_controller.setLeftMotorsDirection('FORWARD')
             rover_controller.setRightMotorsDirection('BACKWARD')
+            rover_controller.startMotors()
             rover_controller.rover.status = value
         elif (value == 'COUNTER-CLOCKWISE'):
+            rover_controller.stopMotors()
             rover_controller.setLeftMotorsDirection('BACKWARD')
             rover_controller.setRightMotorsDirection('FORWARD')
+            rover_controller.startMotors()
             rover_controller.rover.status = value
     elif (command == 'CHANGE_POWER'):
         rover_controller.setPower(int(value))
