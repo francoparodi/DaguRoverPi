@@ -17,20 +17,20 @@
                 <form method="POST" action="/">
                     
                     <div class="form-group">
-                        <input title="Speed" id="speedSliderId" class="speed-slider" type="range" min="0" max="100" step="10" value="{{ rover.speed }}" name="speedSlider" />
+                        <input title="Power" id="powerSliderId" class="power-slider" type="range" min="0" max="100" step="10" value="{{ rover.power }}" name="powerSlider" />
                         <script>
-                            sliderEvents('speedSliderId', '/');
+                            sliderEvents('powerSliderId', '/');
                         </script>
                     </div>
 
                     <div class="form-group">
-                        <button title="Forward" class="btn btn-primary" type="button" name="buttonForward" id="buttonForwardId" value="FORWARD">
+                        <button title="Forward" class="btn btn-primary" type="button" name="buttonForward" id="buttonForwardId">
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
                               </svg> 
                         </button>
                         <script>
-                            buttonEvents('buttonForwardId', '/', 'forward');
+                            buttonEvents('buttonForwardId', '/', 'FORWARD');
                         </script>
                     </div>
 
@@ -43,7 +43,7 @@
                             </svg>
                         </button>
                         <script>
-                            buttonEvents('buttonCounterClockwiseId', '/', 'counter-clockwise');
+                            buttonEvents('buttonCounterClockwiseId', '/', 'COUNTER-CLOCKWISE');
                         </script>
 
                         <button title="Stop" class="btn btn-primary" type="button" name="buttonStop" id="buttonStopId">
@@ -52,7 +52,7 @@
                               </svg>
                         </button>
                         <script>
-                            buttonEvents('buttonStopId', '/', 'stop');
+                            buttonEvents('buttonStopId', '/', 'STOP');
                         </script>
 
                         <button title="Clockwise" class="btn btn-primary" type="button" name="buttonClockwise" id="buttonClockwiseId">
@@ -62,7 +62,7 @@
                               </svg>
                         </button>
                         <script>
-                            buttonEvents('buttonClockwiseId', '/', 'clockwise');
+                            buttonEvents('buttonClockwiseId', '/', 'CLOCKWISE');
                         </script>
 
                     </div>
@@ -74,7 +74,7 @@
                               </svg> 
                         </button>
                         <script>
-                            buttonEvents('buttonBackwardId', '/', 'backward');
+                            buttonEvents('buttonBackwardId', '/', 'BACKWARD');
                         </script>
                     </div>
          
@@ -82,8 +82,7 @@
 
                 <div id="divStatusId" class="form-group">
                     <p>Status {{ rover.status }} </p> 
-                    <p>GPS {{ setup.gps_interval }}s.</p>
-                    <p>Speed {{ rover.speed }}%</p>
+                    <p>Power {{ rover.power }}%</p>
                 </div>
 
             </div>

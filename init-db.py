@@ -50,7 +50,7 @@ try:
         db.session.add(u)
         
         # Setup
-        s = Setup(camera_ip='', gps_interval=0)
+        s = Setup(camera_ip='', gps_interval=0, gps_store=0, stop_on_lost_connection_interval=0)
         db.session.add(s)
 
         message = '{0} Commit'.format(log_type)

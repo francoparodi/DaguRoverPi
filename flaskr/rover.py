@@ -10,8 +10,8 @@ class Rover():
         sys.modules['RPi.GPIO'] = fake_rpi.RPi.GPIO
         sys.modules['smbus'] = fake_rpi.smbus
 
-    speed = 0
-    status = 'stop' # values: 'stop', 'forward', 'backward', 'clockwise', 'counter-clockwise'
+    power = 0
+    status = 'STOP' # values: 'STOP', 'FORWARD', 'BACKWARD', 'CLOCKWISE', 'COUNTER-CLOCKWISE'
     leftFrontMotor = 23 # GPIO23, pin16
     leftBackMotor = 24 # GPIO24, pin18
     rightFrontMotor = 17 # GPIO17, pin11

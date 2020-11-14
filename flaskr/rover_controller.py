@@ -10,8 +10,8 @@ def gpioSetup():
     rover.GPIO.setup(rover.rightFrontMotor, rover.GPIO.OUT)
     rover.GPIO.setup(rover.rightBackMotor, rover.GPIO.OUT)
     # Motors Directions
-    setLeftMotorsDirection('forward')
-    setRightMotorsDirection('forward')
+    setLeftMotorsDirection('FORWARD')
+    setRightMotorsDirection('FORWARD')
     time.sleep(1)
 
     # Enable left side motors
@@ -22,7 +22,7 @@ def gpioSetup():
     rover.rightMotors = rover.GPIO.PWM(rover.rightSideMotorsEnabling, rover.frequency)
 
 def setLeftMotorsDirection(direction):
-    if (direction == 'forward'):
+    if (direction == 'FORWARD'):
         rover.GPIO.output(rover.leftFrontMotor, rover.GPIO.HIGH)
         rover.GPIO.output(rover.leftBackMotor, rover.GPIO.LOW)
     else:
@@ -30,7 +30,7 @@ def setLeftMotorsDirection(direction):
         rover.GPIO.output(rover.leftBackMotor, rover.GPIO.HIGH)
 
 def setRightMotorsDirection(direction):
-    if (direction == 'forward'):
+    if (direction == 'FORWARD'):
         rover.GPIO.output(rover.rightFrontMotor, rover.GPIO.HIGH)
         rover.GPIO.output(rover.rightBackMotor, rover.GPIO.LOW)
     else:
@@ -42,16 +42,16 @@ def stopMotors():
     rover.rightMotors.stop()
 
 def startMotors():
-    rover.leftMotors.start(rover.speed)
-    rover.rightMotors.start(rover.speed)
+    rover.leftMotors.start(rover.power)
+    rover.rightMotors.start(rover.power)
 
-def setSpeed(speed):
-    rover.speed = speed
-    rover.leftMotors.ChangeDutyCycle(rover.speed)
-    rover.rightMotors.ChangeDutyCycle(rover.speed)
+def setPower(power):
+    rover.power = power
+    rover.leftMotors.ChangeDutyCycle(rover.power)
+    rover.rightMotors.ChangeDutyCycle(rover.power)
 
 # Safe terminating
 def cleanUp():  
     stopMotors()
-    setSpeed(0)
+    setPower(0)
     rover.GPIO.cleanup()

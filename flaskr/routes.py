@@ -19,11 +19,11 @@ def homepage():
     
         commandRequest = request.form.get('command')
         if commandRequest != None :
-            execute_command('change_move', commandRequest)
+            execute_command('CHANGE_STATUS', commandRequest)
         
-        speedSlider = request.form.get('speedSlider')
-        if speedSlider != None :
-            execute_command('change_speed', speedSlider)
+        powerSlider = request.form.get('powerSlider')
+        if powerSlider != None :
+            execute_command('CHANGE_POWER', powerSlider)
         
         setup = Setup.query.filter_by(id=1).first()
         return render_template("homepage.html", user=current_user, setup=setup, rover=rover)
@@ -175,9 +175,17 @@ def save_setup():
     try:
         camera_ip = request.form.get("camera_ip")
         gps_interval = request.form.get("gps_interval")
+        gps_store = request.form.get("gps_interval")
+        stop_on_lost_connection_interval = request.form.get("stop_on_lost_connection_interval")
+
         setup = Setup.query.filter_by(id=1).first()
         setup.camera_ip = camera_ip
         setup.gps_interval = int(gps_interval)
+        setup.gps_store = 0
+        if gps_store == 'on':
+            setup.gps_store = 1
+        setup.stop_on_lost_connection_interval = int(stop_on_lost_connection_interval)
+
         db.session.commit()
     except Exception as e:
         msg = "Failed to save setup"
@@ -188,31 +196,31 @@ def save_setup():
 
 def execute_command(command, value): 
     print('Command:{0} Value:{1}'.format(command, value))
-    if (command == 'change_move'):
-        if (value == 'start'):
+    if (command == 'CHANGE_STATUS'):
+        if (value == 'START'):
             rover_controller.startMotors()
-            rover_controller.rover.status = "start"
-        elif (value == 'stop'):
+            rover_controller.rover.status = value
+        elif (value == 'STOP'):
             rover_controller.stopMotors()
-            rover_controller.rover.status = "stop"
-        elif (value == 'forward'):
+            rover_controller.rover.status = value
+        elif (value == 'FORWARD'):
             rover_controller.setLeftMotorsDirection(value)
             rover_controller.setRightMotorsDirection(value)
-            rover_controller.rover.status = "forward"
-        elif (value == 'backward'):
+            rover_controller.rover.status = value
+        elif (value == 'BACKWARD'):
             rover_controller.setLeftMotorsDirection(value)
             rover_controller.setRightMotorsDirection(value)
-            rover_controller.rover.status = "backward"
-        elif (value == 'clockwise'):
-            rover_controller.setLeftMotorsDirection('forward')
-            rover_controller.setRightMotorsDirection('backward')
-            rover_controller.rover.status = "turning clockwise"
-        elif (value == 'counter-clockwise'):
-            rover_controller.setLeftMotorsDirection('backward')
-            rover_controller.setRightMotorsDirection('forward')
-            rover_controller.rover.status = "turning counter-clockwise"
-    elif (command == 'change_speed'):
-        rover_controller.setSpeed(value)
+            rover_controller.rover.status = value
+        elif (value == 'CLOCKWISE'):
+            rover_controller.setLeftMotorsDirection('FORWARD')
+            rover_controller.setRightMotorsDirection('BACKWARD')
+            rover_controller.rover.status = value
+        elif (value == 'COUNTER-CLOCKWISE'):
+            rover_controller.setLeftMotorsDirection('BACKWARD')
+            rover_controller.setRightMotorsDirection('FORWARD')
+            rover_controller.rover.status = value
+    elif (command == 'CHANGE_POWER'):
+        rover_controller.setPower(value)
     else:
         print('Unknown command')
 
