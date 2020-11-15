@@ -9,16 +9,17 @@ except (RuntimeError, ModuleNotFoundError):
     sys.modules['RPi.GPIO'] = fake_rpi.RPi.GPIO
     sys.modules['smbus'] = fake_rpi.smbus
 
-leftFrontMotor = 23 # GPIO23, pin16
-leftBackMotor = 24 # GPIO24, pin18
-rightFrontMotor = 17 # GPIO17, pin11
-rightBackMotor = 27 # GPIO27, pin13
-leftSideMotorsEnabling = 18 # GPIO18, pin12
-rightSideMotorsEnabling = 22 # GPIO22, pin15
+rightBackMotor = 5 # GPIO5, pin29 Blue (Channel01)
+rightFrontMotor = 6 # GPIO06, pin31 Green (Channel03)
+leftBackMotor = 16 # GPIO16, pin36 Violet (Channel02)
+leftFrontMotor = 17 # GPIO17, pin11 Brown (Channel04)
+rightSideMotorsEnabling = 12 # GPIO12, pin32 PWM White (Channel 01/03)
+leftSideMotorsEnabling = 18 # GPIO18, pin12 PWM Yellow (Channel 02/04)
+
 frequency = 50
 leftMotors = None
 rightMotors = None
-initialSpeed = 10
+initialPower = 10
 
 def gpioSetup():
     GPIO.setmode(GPIO.BCM)
@@ -62,13 +63,13 @@ def stopMotors():
     leftMotors.stop()
     rightMotors.stop()
 
-def startMotors(speed = initialSpeed):
-    leftMotors.start(speed)
-    rightMotors.start(speed)
+def startMotors(power = initialPower):
+    leftMotors.start(power)
+    rightMotors.start(power)
 
-def setSpeed(speed):
-    leftMotors.ChangeDutyCycle(speed)
-    rightMotors.ChangeDutyCycle(speed)
+def setPower(power):
+    leftMotors.ChangeDutyCycle(power)
+    rightMotors.ChangeDutyCycle(power)
 
 def demo():
     # GPIO Setup
@@ -76,30 +77,67 @@ def demo():
     time.sleep(1)
 
     # Start motors (power of 10%)
-    startMotors(initialSpeed)
+    print('Start motors with power of 10%')
+    startMotors(initialPower)
     time.sleep(2)
 
-    # Increase speed
-    setSpeed(30)
+    # Increase power
+    print('Increase power to 30%')
+    setPower(30)
     time.sleep(2)
 
     # Stop motors
+    print('Stop motors')
     stopMotors()
     time.sleep(1)
 
     # Change direction
+    print('Set direction to backward')
     setLeftMotorsDirection('backward')
     setRightMotorsDirection('backward')
 
     # Start motors (power of 10%)
-    startMotors(initialSpeed)
+    print('Start motors with power of 10%')
+    startMotors(initialPower)
     time.sleep(3)
 
-    # increase speed
-    setSpeed(30)
+    # increase power
+    print('Increase power to 30%')
+    setPower(30)
     time.sleep(3)
 
     # stop motors
+    print('Stop motors')
+    stopMotors()
+    time.sleep(1)
+
+    # Change direction
+    print('Set direction left to forward, right to backward')
+    setLeftMotorsDirection('forward')
+    setRightMotorsDirection('backward')
+
+    # Start motors (power of 10%)
+    print('Start motors with power of 10%')
+    startMotors(initialPower)
+    time.sleep(3)
+
+    # stop motors
+    print('Stop motors')
+    stopMotors()
+    time.sleep(1)
+
+    # Change direction
+    print('Set direction left to backward, right to forward')
+    setLeftMotorsDirection('backward')
+    setRightMotorsDirection('forward')
+
+    # Start motors (power of 10%)
+    print('Start motors with power of 10%')
+    startMotors(initialPower)
+    time.sleep(3)
+
+    # stop motors
+    print('Stop motors')
     stopMotors()
     time.sleep(1)
 
