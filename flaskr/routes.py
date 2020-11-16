@@ -26,7 +26,7 @@ def homepage():
             execute_command('CHANGE_POWER', powerSlider)
         
         setup = Setup.query.filter_by(id=1).first()
-        return render_template("homepage.html", user=current_user, setup=setup, rover=rover)
+        return render_template("homepage.html", user=current_user, setup=setup, rover_controller=rover_controller)
 
     return redirect(url_for('view.login'))
 
@@ -192,7 +192,7 @@ def save_setup():
         flash(msg)
         print(e)
         return redirect("/setup")
-    return render_template("homepage.html", user=current_user, setup=setup, rover=rover)
+    return render_template("homepage.html", user=current_user, setup=setup, rover_controller=rover_controller)
 
 def execute_command(command, value): 
     print('Command:{0} Value:{1}'.format(command, value))

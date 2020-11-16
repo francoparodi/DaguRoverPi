@@ -1,5 +1,6 @@
 import time
 from flaskr.rover import Rover as rover
+from flaskr.gps import Gps as gps
 
 def gpioSetup():
     rover.GPIO.setmode(rover.GPIO.BCM)
