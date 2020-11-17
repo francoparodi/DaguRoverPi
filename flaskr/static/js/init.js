@@ -29,5 +29,29 @@ function buttonEvents(elementId, toUrl, command) {
                 }
             });
             $("#divStatusId").load(" #divStatusId > *");
+            stopAllButtonsBlinking();
+            if(command != "STOP"){
+                startBlinking(elementId);
+            }
+    }
+}
+
+function stopAllButtonsBlinking(){
+    console.log('stopAll');
+    var elementIds = ['buttonForwardId', 'buttonBackwardId', 'buttonClockwiseId', 'buttonCounterClockwiseId'];
+    for (i = 0; i < elementIds.length; i++) {
+        var element = document.getElementById(elementIds[i]);
+        var classElement = element.getAttribute("class");
+        classElement = classElement.replace("blinking", ""); 
+        element.setAttribute("class", classElement); 
+      } 
+}
+
+function startBlinking(elementId){
+    var element = document.getElementById(elementId);
+    classElement = element.getAttribute("class");
+    if (!classElement.includes("blinking")){
+        classElement = classElement + " blinking";
+        element.setAttribute("class", classElement);  
     }
 }
