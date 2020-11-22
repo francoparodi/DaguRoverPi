@@ -19,28 +19,23 @@
                 {% endwith %}
              </div>
 
-             <div class="container">
                 <form method="POST" action="/save_setup">
                     <div class="form-group">
-                        <input type="text" name="camera_ip" class="form-control" id="camera_ip" value="{{ setup.camera_ip }}" placeholder="Cam address (http://localhost:8081)">
-                        <label class="custom-control-label" for="camera_ip">IP Cam</label>
-                    </div>
-                    <div class="form-group">
+                        <label  for="camera_ip">Camera IP address</label>
+                        <input type="text" name="camera_ip" class="form-control" id="camera_ip" value="{{ setup.camera_ip }}" placeholder="http://localhost:8081">
+                        <label for="gps_interval">GPS interval check (s.)</label>
                         <input type="number" name="gps_interval" class="form-control" id="gps_interval" value="{{ setup.gps_interval }}" placeholder="GPS interval (s.)">
-                        <label class="custom-control-label" for="gps_interval">GPS interval (s.)</label>
+                        <label for="stop_on_lost_connection_interval">Stop on lost connection after (s.)</label>
+                        <input type="number" name="stop_on_lost_connection_interval" class="form-control" id="stop_on_lost_connection_interval" value="{{ setup.stop_on_lost_connection_interval }}" placeholder="Stop on lost connection (s.)">
                     </div>
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" name="gps_store" id="gps_store" {% if setup.gps_store == 1 %} checked {% endif %}>
-                        <label class="custom-control-label" for="enabled">GPS store</label>
-                    </div>
-                    <div class="form-group">
-                        <input type="number" name="stop_on_lost_connection_interval" class="form-control" id="stop_on_lost_connection_interval" value="{{ setup.stop_on_lost_connection_interval }}" placeholder="Stop on lost connection (s.)">
-                        <label class="custom-control-label" for="stop_on_lost_connection_interval">Stop on lost connection after (s.)</label>
+                        <label class="custom-control-label" for="gps_store">GPS store </label>
                     </div>
                     <button type="submit" class="btn btn-primary">Save</button>
                     <a class="btn btn-primary" href="{{ url_for('view.homepage') }}" role="button">Back</a>
                 </form>
-            </div>
+
         </div>
 
     </div>

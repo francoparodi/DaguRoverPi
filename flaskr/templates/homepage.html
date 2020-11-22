@@ -5,14 +5,16 @@
 {% block content %}
 <div class="container text-center mt-3">
     <div class="row no-gutters justify-content-center">
+
+        {% if setup.camera_ip != '' %}
+        <div class="form-group">
+            <img class="camera" src="{{ setup.camera_ip }}"/>
+        </div>
+        {% endif %}
+
         <div class="col-md-4">
             <div class="container">
 
-                {% if setup.camera_ip != '' %}
-                <div class="form-group">
-                    <img class="camera" src="{{ setup.camera_ip }}"/>
-                </div>
-                {% endif %}
 
                 <form method="POST" action="/">
                     
