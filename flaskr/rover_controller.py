@@ -52,7 +52,8 @@ def setPower(power):
     rover.rightMotors.ChangeDutyCycle(rover.power)
 
 # Safe terminating
-def cleanUp():  
+def cleanUp():
     stopMotors()
     setPower(0)
+    rover.status = "STOP"
     rover.GPIO.cleanup()

@@ -117,7 +117,6 @@ def add_user():
     except Exception as e:
         msg = "Failed to add user {}".format(username)
         flash(msg)
-        print(e)
         return redirect("/new")
     return redirect("/users")
 
@@ -147,7 +146,6 @@ def update_user():
     except Exception as e:
         msg = "Failed to update user {}".format(oldUsername)
         flash(msg)
-        print(e)
         return redirect("/edit")
     return redirect("/users")
 
@@ -164,7 +162,6 @@ def delete():
     except Exception as e:
         msg = "Failed to delete user {}".format(username)
         flash(msg)
-        print(e)
     return redirect("/users")
 
 @view.route("/save_setup", methods=["POST"])
@@ -175,7 +172,7 @@ def save_setup():
     try:
         camera_ip = request.form.get("camera_ip")
         gps_interval = request.form.get("gps_interval")
-        gps_store = request.form.get("gps_interval")
+        gps_store = request.form.get("gps_store")
         stop_on_lost_connection_interval = request.form.get("stop_on_lost_connection_interval")
 
         setup = Setup.query.filter_by(id=1).first()
@@ -187,12 +184,12 @@ def save_setup():
         setup.stop_on_lost_connection_interval = int(stop_on_lost_connection_interval)
 
         db.session.commit()
+        msg = "Setup successfully saved"
+        flash(msg)
     except Exception as e:
         msg = "Failed to save setup"
         flash(msg)
-        print(e)
-        return redirect("/setup")
-    return render_template("homepage.html", user=current_user, setup=setup, rover_controller=rover_controller)
+    return redirect("/setup")
 
 def execute_command(command, value): 
     print('Command:{0} Value:{1}'.format(command, value))
