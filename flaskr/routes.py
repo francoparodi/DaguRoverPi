@@ -39,11 +39,11 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             msg = "Invalid credentials"
-            flash(msg)
+            flash(msg, category='warning')
             return redirect(url_for('view.login'))
         elif user.enabled == 0:
             msg = "User disabled"
-            flash(msg)
+            flash(msg, category='warning')
             return redirect(url_for('view.login'))
         login_user(user, remember=form.remember_me.data)
         return redirect(url_for('view.homepage'))
@@ -116,7 +116,7 @@ def add_user():
         db.session.commit()
     except Exception as e:
         msg = "Failed to add user {}".format(username)
-        flash(msg)
+        flash(msg, category='danger')
         return redirect("/new")
     return redirect("/users")
 
@@ -145,7 +145,7 @@ def update_user():
         db.session.commit()
     except Exception as e:
         msg = "Failed to update user {}".format(oldUsername)
-        flash(msg)
+        flash(msg, category='danger')
         return redirect("/edit")
     return redirect("/users")
 
@@ -161,7 +161,7 @@ def delete():
         db.session.commit()
     except Exception as e:
         msg = "Failed to delete user {}".format(username)
-        flash(msg)
+        flash(msg, category='danger')
     return redirect("/users")
 
 @view.route("/save_setup", methods=["POST"])
@@ -185,10 +185,10 @@ def save_setup():
 
         db.session.commit()
         msg = "Setup successfully saved"
-        flash(msg)
+        flash(msg, category='info')
     except Exception as e:
         msg = "Failed to save setup"
-        flash(msg)
+        flash(msg, category='danger')
     return redirect("/setup")
 
 def execute_command(command, value): 
