@@ -36,6 +36,10 @@ html, body {
     display: none;
 }
 
+.visible {
+    display: unset !important;
+}
+
 .visible-blinking {
     display: unset !important;
     animation: blinker 1s linear infinite;

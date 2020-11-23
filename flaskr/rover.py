@@ -12,6 +12,7 @@ class Rover():
 
     power = 0
     status = 'STOP' # values: 'STOP', 'FORWARD', 'BACKWARD', 'CLOCKWISE', 'COUNTER-CLOCKWISE'
+    clientConnected = False
     rightBackMotor = 5 # GPIO5, pin29 Blue (Channel01)
     rightFrontMotor = 6 # GPIO06, pin31 Green (Channel03)
     leftBackMotor = 16 # GPIO16, pin36 Violet (Channel02)

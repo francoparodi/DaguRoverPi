@@ -5,7 +5,7 @@ function sliderEvents(elementId, toUrl) {
                 url: toUrl,
                 data: $('form').serialize(),
                 success: function(response){
-                    console.log(response);
+                    //console.log(response);
                 },
                 error: function(error){
                     console.log(error);
@@ -22,7 +22,7 @@ function buttonEvents(elementId, toUrl, command) {
                 url: toUrl,
                 data: 'command='+command,
                 success: function(response){
-                    console.log(response);
+                    //console.log(response);
                 },
                 error: function(error){
                     console.log(error);
@@ -31,3 +31,22 @@ function buttonEvents(elementId, toUrl, command) {
             $("#divStatusId").load(" #divStatusId > *");
     }
 }
+
+var interval = 3000; 
+function startClientKeepalive() {
+    $.post({
+            type: 'POST',
+            url: '/clientConnected',
+            data: 'clientConnected=True',
+            dataType: 'json',
+            success: function (response) {
+                //console.log(response);   
+            },
+            complete: function (data) {
+                // Schedule the next
+                setTimeout(startClientKeepalive, interval);
+            }
+        });
+        $("#divStatusId").load(" #divStatusId > *");
+}
+

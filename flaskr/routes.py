@@ -13,10 +13,24 @@ view = Blueprint("view", __name__)
 
 rover_controller.gpioSetup()
 
+@view.route("/clientConnected", methods=["GET", "POST"])
+def clientConntected():
+    if current_user.is_authenticated:
+        clientConntected = request.form.get('clientConnected')
+        if clientConntected == 'True' :
+            print('Client is connected')
+            rover_controller.rover.clientConnected = True
+        else:
+            print('Client is disconnected')
+            rover_controller.rover.clientConnected = False
+        setup = Setup.query.filter_by(id=1).first()
+        return render_template("homepage.html", user=current_user, setup=setup, rover_controller=rover_controller)
+    return redirect(url_for('view.login'))
+
 @view.route("/", methods=["GET", "POST"])
 def homepage():
     if current_user.is_authenticated:
-    
+
         commandRequest = request.form.get('command')
         if commandRequest != None :
             execute_command('CHANGE_STATUS', commandRequest)
