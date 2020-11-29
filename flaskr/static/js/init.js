@@ -37,7 +37,7 @@ function buttonEvents(elementId, toUrl, command) {
     }
 }
 
-var interval = 3000; 
+var interval = 5000; 
 function startClientKeepalive() {
     $.post({
             type: 'POST',

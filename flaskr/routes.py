@@ -1,13 +1,17 @@
-import atexit
+import atexit, threading, time
 from flask import current_app as app
 
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, copy_current_request_context
 from flask_login import current_user, login_user, logout_user, login_required
 
 from flaskr.forms import LoginForm
 from flaskr.models import db, User, Setup
 from flaskr.rover import Rover as rover
 from flaskr import rover_controller
+
+stop_event = threading.Event()
+daemon = threading.Thread()
+isDaemonStarted = False
 
 view = Blueprint("view", __name__)
 
@@ -18,11 +22,9 @@ def clientConntected():
     if current_user.is_authenticated:
         clientConntected = request.form.get('clientConnected')
         if clientConntected == 'True' :
-            print('Client is connected')
+            print('Client is connected (keep-alive every 10 s.)')
             rover_controller.rover.clientConnected = True
-        else:
-            print('Client is disconnected')
-            rover_controller.rover.clientConnected = False
+
         setup = Setup.query.filter_by(id=1).first()
         return render_template("homepage.html", user=current_user, setup=setup, rover_controller=rover_controller)
     return redirect(url_for('view.login'))
@@ -30,7 +32,8 @@ def clientConntected():
 @view.route("/", methods=["GET", "POST"])
 def homepage():
     if current_user.is_authenticated:
-
+        setup = Setup.query.filter_by(id=1).first()
+        startDaemon(setup.stop_on_lost_connection_interval)
         commandRequest = request.form.get('command')
         if commandRequest != None :
             execute_command('CHANGE_STATUS', commandRequest)
@@ -39,7 +42,6 @@ def homepage():
         if powerSlider != None :
             execute_command('CHANGE_POWER', powerSlider)
         
-        setup = Setup.query.filter_by(id=1).first()
         return render_template("homepage.html", user=current_user, setup=setup, rover_controller=rover_controller)
 
     return redirect(url_for('view.login'))
@@ -66,7 +68,7 @@ def login():
 @view.route("/logout")
 def logout():
     logout_user()
-    rover_controller.cleanUp()
+    cleanUp()
     return redirect(url_for('view.homepage'))
 
 @view.route("/users")
@@ -240,9 +242,51 @@ def execute_command(command, value):
     else:
         print('Unknown command')
 
+def startDaemon(interval):
+    global isDaemonStarted
+    
+    if isDaemonStarted:
+        return
+    
+    if interval < 1:
+        print('Daemon not startable due to interval {0}'.format(interval))
+        return 
+
+    @copy_current_request_context
+    def daemonProcess(name, stop_event):
+        while not stop_event.is_set():
+            print('Checking client connection (every {0}s.)'.format(interval))
+            time.sleep(interval)
+            if not rover_controller.rover.clientConnected:
+                print('Client connection lost, stop motors.')
+                rover_controller.stopMotors()
+            rover_controller.rover.clientConnected = False
+
+    
+    print('isDaemonStarted {0}'.format(isDaemonStarted))
+
+    if not isDaemonStarted:
+        daemon.__init__(target=daemonProcess, args=('DaguRoverPi', stop_event), daemon=True)
+        daemon.start()
+        isDaemonStarted = True
+        print('isDaemonStarted {0}'.format(isDaemonStarted))
+
+
+def stopDaemon():
+    print('Stopping daemon...')
+    global isDaemonStarted
+    print('isDaemonStarted {0}'.format(isDaemonStarted))
+    if isDaemonStarted:
+        stop_event.set()
+        daemon.join()
+        stop_event.clear()
+        isDaemonStarted = False
+        print('isDaemonStarted {0}'.format(isDaemonStarted))
+
 # Safe terminating
 def cleanUp():  
     print('Safe terminating')
     rover_controller.cleanUp()
+    stopDaemon()
 
 atexit.register(cleanUp)
