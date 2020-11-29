@@ -7,11 +7,14 @@ function sliderEvents(elementId, toUrl) {
                 success: function(response){
                     //console.log(response);
                 },
+                complete: function (data) {
+                    $("#divStatusId").load(" #divStatusId > *");
+                },
                 error: function(error){
                     console.log(error);
                 }
+
             });
-            $("#divStatusId").load(" #divStatusId > *");
         }
 }
 
@@ -24,11 +27,13 @@ function buttonEvents(elementId, toUrl, command) {
                 success: function(response){
                     //console.log(response);
                 },
+                complete: function (data) {
+                    $("#divStatusId").load(" #divStatusId > *");
+                },
                 error: function(error){
                     console.log(error);
                 }
             });
-            $("#divStatusId").load(" #divStatusId > *");
     }
 }
 
@@ -45,8 +50,11 @@ function startClientKeepalive() {
             complete: function (data) {
                 // Schedule the next
                 setTimeout(startClientKeepalive, interval);
+                $("#divStatusId").load(" #divStatusId > *");
+            },
+            error: function(error){
+                console.log(error);
             }
         });
-        $("#divStatusId").load(" #divStatusId > *");
 }
 
