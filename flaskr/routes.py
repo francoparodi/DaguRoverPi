@@ -20,12 +20,12 @@ rover_controller.gpioSetup()
 @view.route("/clientConnected", methods=["GET", "POST"])
 def clientConntected():
     if current_user.is_authenticated:
+        setup = Setup.query.filter_by(id=1).first()
         clientConntected = request.form.get('clientConnected')
         if clientConntected == 'True' :
-            print('Client is connected (keep-alive every 10 s.)')
+            print('Client is connected, keep-alive received every {0}s.'.format(setup.client_keepalive_interval))
             rover_controller.rover.clientConnected = True
 
-        setup = Setup.query.filter_by(id=1).first()
         return render_template("homepage.html", user=current_user, setup=setup, rover_controller=rover_controller)
     return redirect(url_for('view.login'))
 
@@ -69,7 +69,7 @@ def login():
 def logout():
     logout_user()
     cleanUp()
-    return redirect(url_for('view.homepage'))
+    return redirect(url_for('view.login'))
 
 @view.route("/users")
 @login_required
@@ -190,6 +190,7 @@ def save_setup():
         gps_interval = request.form.get("gps_interval")
         gps_store = request.form.get("gps_store")
         stop_on_lost_connection_interval = request.form.get("stop_on_lost_connection_interval")
+        client_keepalive_interval = request.form.get("client_keepalive_interval")
 
         setup = Setup.query.filter_by(id=1).first()
         setup.camera_ip = camera_ip
@@ -198,6 +199,7 @@ def save_setup():
         if gps_store == 'on':
             setup.gps_store = 1
         setup.stop_on_lost_connection_interval = int(stop_on_lost_connection_interval)
+        setup.client_keepalive_interval = int(client_keepalive_interval)
 
         db.session.commit()
         msg = "Setup successfully saved"
@@ -249,7 +251,7 @@ def startDaemon(interval):
         return
     
     if interval < 1:
-        print('Daemon not startable due to interval {0}'.format(interval))
+        print('Daemon not startable due to interval {0}s.'.format(interval))
         return 
 
     @copy_current_request_context
@@ -258,10 +260,9 @@ def startDaemon(interval):
             print('Checking client connection (every {0}s.)'.format(interval))
             time.sleep(interval)
             if not rover_controller.rover.clientConnected:
-                print('Client connection lost, stop motors.')
+                print('Client connection lost')
                 rover_controller.stopMotors()
             rover_controller.rover.clientConnected = False
-
     
     print('isDaemonStarted {0}'.format(isDaemonStarted))
 
@@ -270,7 +271,6 @@ def startDaemon(interval):
         daemon.start()
         isDaemonStarted = True
         print('isDaemonStarted {0}'.format(isDaemonStarted))
-
 
 def stopDaemon():
     print('Stopping daemon...')

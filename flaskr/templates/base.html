@@ -20,7 +20,7 @@
     <title>Dagu Rover</title>
 </head>
 
-<body onload="startClientKeepalive();">
+<body">
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -59,7 +59,7 @@
                             </li>
                         {% endif %} 
                         <li class="nav-item active">
-                        <a class="nav-item nav-link" onclick="stopClientKeepalive();" href="{{ url_for('view.logout') }}" data-toggle="tooltip" title="Logout">
+                        <a class="nav-item nav-link" onclick="stopKeepAlive();" href="{{ url_for('view.logout') }}" data-toggle="tooltip" title="Logout">
                             Logout
                         </a>
                         </li>

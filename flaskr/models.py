@@ -37,6 +37,7 @@ class Setup(db.Model):
     gps_interval = db.Column(db.Integer, default=0)
     gps_store = db.Column(db.Boolean, default=False, unique=False, nullable=False)
     stop_on_lost_connection_interval = db.Column(db.Integer, default=0)
+    client_keepalive_interval = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return f"Setup('{ self.id }', '{ self.created_at }', '{ self.camera_enabled }', '{ self.gps_interval }')"

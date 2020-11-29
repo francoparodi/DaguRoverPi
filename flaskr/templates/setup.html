@@ -25,8 +25,10 @@
                         <input type="text" name="camera_ip" class="form-control" id="camera_ip" value="{{ setup.camera_ip }}" placeholder="http://localhost:8081">
                         <label for="gps_interval">GPS interval check (s.)</label>
                         <input type="number" name="gps_interval" class="form-control" id="gps_interval" value="{{ setup.gps_interval }}" placeholder="GPS interval (s.)">
+                        <label for="client_keepalive_interval">Keep-alive from client (s.)</label>
+                        <input type="number" name="client_keepalive_interval" class="form-control" id="client_keepalive_interval" value="{{ setup.client_keepalive_interval }}">
                         <label for="stop_on_lost_connection_interval">Stop on lost connection after (s.)</label>
-                        <input type="number" name="stop_on_lost_connection_interval" class="form-control" id="stop_on_lost_connection_interval" value="{{ setup.stop_on_lost_connection_interval }}" placeholder="Stop on lost connection (s.)">
+                        <input type="number" name="stop_on_lost_connection_interval" class="form-control" id="stop_on_lost_connection_interval" value="{{ setup.stop_on_lost_connection_interval }}">
                     </div>
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" name="gps_store" id="gps_store" {% if setup.gps_store == 1 %} checked {% endif %}>

@@ -13,7 +13,6 @@ function sliderEvents(elementId, toUrl) {
                 error: function(error){
                     console.log(error);
                 }
-
             });
         }
 }
@@ -37,8 +36,7 @@ function buttonEvents(elementId, toUrl, command) {
     }
 }
 
-var interval = 5000; 
-function startClientKeepalive() {
+function keepAlive() {
     $.post({
             type: 'POST',
             url: '/clientConnected',
@@ -49,12 +47,23 @@ function startClientKeepalive() {
             },
             complete: function (data) {
                 // Schedule the next
-                setTimeout(startClientKeepalive, interval);
-                $("#divStatusId").load(" #divStatusId > *");
             },
             error: function(error){
                 console.log(error);
             }
         });
+        $("#divStatusId").load(" #divStatusId > *");
+}
+
+var intervalId;
+
+function startKeepAlive(seconds){
+    if(!intervalId) { 
+        intervalId = setInterval(keepAlive, seconds*1000);
+    }
+}
+
+function stopKeepAlive(){
+    clearInterval(intervalId);
 }
 

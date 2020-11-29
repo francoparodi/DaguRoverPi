@@ -124,4 +124,14 @@
     </div>
 </div>
 
+<div>
+    <script>
+        var client_keepalive_interval = {{ setup.client_keepalive_interval }};
+        console.log('keepalive interval ' + client_keepalive_interval + 's.');
+        window.addEventListener("load", function(){
+        startKeepAlive(client_keepalive_interval);
+    });
+    </script>
+</div>
+
 {% endblock %}
