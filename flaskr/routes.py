@@ -14,7 +14,8 @@ GPSDaemonStopEvent = threading.Event()
 isCheckConnectionDaemonStarted = False
 isGPSDaemonStarted = False
 
-daemon = threading.Thread()
+checkConnectionDaemon = threading.Thread()
+GPSDaemon = threading.Thread()
 
 view = Blueprint("view", __name__)
 
@@ -36,8 +37,8 @@ def clientConntected():
 def homepage():
     if current_user.is_authenticated:
         setup = Setup.query.filter_by(id=1).first()
-        startCheckConnectionDaemon(setup.stop_on_lost_connection_interval)
-        startGPSDaemon(setup.gps_interval)
+        startCheckConnectionDaemon()
+        startGPSDaemon()
         commandRequest = request.form.get('command')
         if commandRequest != None :
             rover_controller.execute_command('CHANGE_STATUS', commandRequest)
@@ -224,94 +225,98 @@ def save_setup():
     return redirect("/setup")
 
 # Daemon to check client connection every 'interval' seconds, due to 'interval' setup value.
-def startCheckConnectionDaemon(interval):
+def startCheckConnectionDaemon():
     global isCheckConnectionDaemonStarted
     
     if isCheckConnectionDaemonStarted:
         return
-    
-    if interval < 1:
-        log('CheckConnectionDaemon not startable due to interval value {0}s.'.format(interval))
+    stop_on_lost_connection_interval = Setup.query.filter_by(id=1).first().stop_on_lost_connection_interval
+    if stop_on_lost_connection_interval < 1:
+        log('checkConnectionDaemon not startable due to interval value {0}s.'.format(stop_on_lost_connection_interval))
         return 
 
     @copy_current_request_context
-    def daemonProcess(name, checkConnectionDaemonStopEvent):
+    def checkConnectionDaemonProcess(name, checkConnectionDaemonStopEvent):
         while not checkConnectionDaemonStopEvent.is_set():
-            log('checking client connection (every {0}s.)'.format(interval))
-            time.sleep(interval)
+            stop_on_lost_connection_interval = Setup.query.filter_by(id=1).first().stop_on_lost_connection_interval
+            log('checking client connection alive (every {0}s.)'.format(stop_on_lost_connection_interval))
+            time.sleep(stop_on_lost_connection_interval)
             if not rover_controller.rover.clientConnected:
                 log('client connection lost!')
                 rover_controller.stopMotors()
             rover_controller.rover.clientConnected = False
     
-    log('isCheckConnectionDaemonStarted {0}'.format(isCheckConnectionDaemonStarted))
+    log('isCheckConnectionDaemonStarted: {0}'.format(isCheckConnectionDaemonStarted))
 
     if not isCheckConnectionDaemonStarted:
-        daemon.__init__(target=daemonProcess, args=('CheckConnectionDaemon', checkConnectionDaemonStopEvent), daemon=True)
-        daemon.start()
+        checkConnectionDaemon.__init__(target=checkConnectionDaemonProcess, args=('CheckConnectionDaemon', checkConnectionDaemonStopEvent), daemon=True)
+        checkConnectionDaemon.start()
         isCheckConnectionDaemonStarted = True
-        log('isCheckConnectionDaemonStarted {0}'.format(isCheckConnectionDaemonStarted))
+        log('isCheckConnectionDaemonStarted: {0}'.format(isCheckConnectionDaemonStarted))
 
 def stopCheckConnectionDaemon():
-    log('Stopping CheckConnection daemon...')
+    log('stopping CheckConnection daemon...')
     global isCheckConnectionDaemonStarted
-    log('isCheckConnectionDaemonStarted {0}'.format(isCheckConnectionDaemonStarted))
+    log('isCheckConnectionDaemonStarted: {0}'.format(isCheckConnectionDaemonStarted))
     if isCheckConnectionDaemonStarted:
         checkConnectionDaemonStopEvent.set()
-        daemon.join()
+        checkConnectionDaemon.join()
         checkConnectionDaemonStopEvent.clear()
         isCheckConnectionDaemonStarted = False
-        log('isCheckConnectionDaemonStarted {0}'.format(isCheckConnectionDaemonStarted))
+        log('isCheckConnectionDaemonStarted: {0}'.format(isCheckConnectionDaemonStarted))
 
 # Daemon to get GPS position every 'interval' seconds, due to 'interval' setup value.
-def startGPSDaemon(interval):
+def startGPSDaemon():
     global isGPSDaemonStarted
     
     if isGPSDaemonStarted:
         return
-    
-    if interval < 1:
-        log('GPSDaemon not startable due to interval value {0}s.'.format(interval))
-        return 
+
+    # Not started and not startable
+    gps_interval = Setup.query.filter_by(id=1).first().gps_interval
+    if gps_interval < 1:
+        log('GPSDaemon not startable due to interval value {0}}s.'.format(gps_interval))
+        return
 
     @copy_current_request_context
-    def daemonProcess(name, GPSDaemonStopEvent):
+    def GPSDaemonProcess(name, GPSDaemonStopEvent):
         while not GPSDaemonStopEvent.is_set():
-            log('Retrieve GPS position (every {0}s.)'.format(interval))
-            time.sleep(interval)
+            gps_interval = Setup.query.filter_by(id=1).first().gps_interval
+            log('retrieve GPS position (every {0}s.)'.format(gps_interval))
+            gps_controller.gpsGetGPGGA()
+            time.sleep(gps_interval)
             if not gps_controller.gps.online:
-                log('GPS position not available, GPSOnline={0}'.format(gps_controller.gps.online))
-            else :
-                log('GPSSatellites={0}'.format(gps_controller.gps.satellites))
+                log('GPS position not available, GPSOnline: {0}'.format(gps_controller.gps.online))
     
-    log('isGPSDaemonStarted {0}'.format(isGPSDaemonStarted))
+    log('isGPSDaemonStarted: {0}'.format(isGPSDaemonStarted))
 
     if not isGPSDaemonStarted:
-        daemon.__init__(target=daemonProcess, args=('GPSDaemon', GPSDaemonStopEvent), daemon=True)
-        daemon.start()
+        GPSDaemon.__init__(target=GPSDaemonProcess, args=('GPSDaemon', GPSDaemonStopEvent), daemon=True)
+        GPSDaemon.start()
         isGPSDaemonStarted = True
         gps_controller.gps.online = True
-        gps_controller.gpsStart()
-        log('isGPSDaemonStarted {0}'.format(isGPSDaemonStarted))
+        log('isGPSDaemonStarted: {0}'.format(isGPSDaemonStarted))
 
 def stopGPSDaemon():
     log('Stopping GPS daemon...')
     global isGPSDaemonStarted
-    log('isGPSDaemonStarted {0}'.format(isGPSDaemonStarted))
+    log('isGPSDaemonStarted: {0}'.format(isGPSDaemonStarted))
+    gps_controller.gps.online = False
     if isGPSDaemonStarted:
         GPSDaemonStopEvent.set()
-        daemon.join()
+        GPSDaemon.join()
         GPSDaemonStopEvent.clear()
         isGPSDaemonStarted = False
-        log('isGPSDaemonStarted {0}'.format(isGPSDaemonStarted))
+        log('isGPSDaemonStarted: {0}'.format(isGPSDaemonStarted))
+
 
 # Safe terminating
 def cleanUp():  
     log('Safe terminating')
-    rover_controller.cleanUp()
-    gps_controller.cleanUp()
     stopCheckConnectionDaemon()
     stopGPSDaemon()
+    rover_controller.cleanUp()
+    gps_controller.cleanUp()
 
 atexit.register(cleanUp)
 
