@@ -1,6 +1,5 @@
 import time
 from flaskr.rover import Rover as rover
-from flaskr.gps import Gps as gps
 
 def gpioSetup():
     rover.GPIO.setmode(rover.GPIO.BCM)
@@ -21,6 +20,41 @@ def gpioSetup():
     # Enable right side motors
     rover.GPIO.setup(rover.rightSideMotorsEnabling, rover.GPIO.OUT)
     rover.rightMotors = rover.GPIO.PWM(rover.rightSideMotorsEnabling, rover.frequency)
+
+def execute_command(command, value): 
+    print('Command:{0} Value:{1}'.format(command, value))
+    if (command == 'CHANGE_STATUS'):
+        if (value == 'STOP'):
+            stopMotors()
+            rover.status = value
+        elif (value == 'FORWARD'):
+            stopMotors()
+            setLeftMotorsDirection(value)
+            setRightMotorsDirection(value)
+            startMotors()
+            rover.status = value
+        elif (value == 'BACKWARD'):
+            stopMotors() 
+            setLeftMotorsDirection(value)
+            setRightMotorsDirection(value)
+            startMotors()
+            rover.status = value
+        elif (value == 'CLOCKWISE'):
+            stopMotors() 
+            setLeftMotorsDirection('FORWARD')
+            setRightMotorsDirection('BACKWARD')
+            startMotors()
+            rover.status = value
+        elif (value == 'COUNTER-CLOCKWISE'):
+            stopMotors()
+            setLeftMotorsDirection('BACKWARD')
+            setRightMotorsDirection('FORWARD')
+            startMotors()
+            rover.status = value
+    elif (command == 'CHANGE_POWER'):
+        setPower(int(value))
+    else:
+        print('Unknown command')
 
 def setLeftMotorsDirection(direction):
     if (direction == 'FORWARD'):

@@ -7,11 +7,14 @@ from flask_login import current_user, login_user, logout_user, login_required
 from flaskr.forms import LoginForm
 from flaskr.models import db, User, Setup
 from flaskr.rover import Rover as rover
-from flaskr import rover_controller
+from flaskr import rover_controller, gps_controller
 
-stop_event = threading.Event()
+checkConnectionDaemonStopEvent = threading.Event()
+GPSDaemonStopEvent = threading.Event()
+isCheckConnectionDaemonStarted = False
+isGPSDaemonStarted = False
+
 daemon = threading.Thread()
-isDaemonStarted = False
 
 view = Blueprint("view", __name__)
 
@@ -23,26 +26,25 @@ def clientConntected():
         setup = Setup.query.filter_by(id=1).first()
         clientConntected = request.form.get('clientConnected')
         if clientConntected == 'True' :
-            print('Client status: connected (keep-alive received every {0}s.)'.format(setup.client_keepalive_interval))
+            log('Client status: connected (keep-alive received every {0}s.)'.format(setup.client_keepalive_interval))
             rover_controller.rover.clientConnected = True
+        return render_template("homepage.html", user=current_user, setup=setup, rover_controller=rover_controller, gps_controller=gps_controller)
 
-        return render_template("homepage.html", user=current_user, setup=setup, rover_controller=rover_controller)
     return redirect(url_for('view.login'))
 
 @view.route("/", methods=["GET", "POST"])
 def homepage():
     if current_user.is_authenticated:
         setup = Setup.query.filter_by(id=1).first()
-        startDaemon(setup.stop_on_lost_connection_interval)
+        startCheckConnectionDaemon(setup.stop_on_lost_connection_interval)
+        startGPSDaemon(setup.gps_interval)
         commandRequest = request.form.get('command')
         if commandRequest != None :
-            execute_command('CHANGE_STATUS', commandRequest)
-        
+            rover_controller.execute_command('CHANGE_STATUS', commandRequest)
         powerSlider = request.form.get('powerSlider')
         if powerSlider != None :
-            execute_command('CHANGE_POWER', powerSlider)
-        
-        return render_template("homepage.html", user=current_user, setup=setup, rover_controller=rover_controller)
+            rover_controller.execute_command('CHANGE_POWER', powerSlider)
+        return render_template("homepage.html", user=current_user, setup=setup, rover_controller=rover_controller, gps_controller=gps_controller)
 
     return redirect(url_for('view.login'))
 
@@ -50,6 +52,7 @@ def homepage():
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('view.homepage'))
+    
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -61,8 +64,10 @@ def login():
             msg = "User disabled"
             flash(msg, category='warning')
             return redirect(url_for('view.login'))
+        
         login_user(user, remember=form.remember_me.data)
         return redirect(url_for('view.homepage'))
+    
     return render_template("login.html", form=form)
 
 @view.route("/logout")
@@ -76,6 +81,7 @@ def logout():
 def users():
     if not current_user.role == 'ADMIN':
         return render_template("homepage.html")
+
     users = User.query.all()
     return render_template("users.html", users=users)
 
@@ -84,6 +90,7 @@ def users():
 def setup():
     if not current_user.role == 'ADMIN':
         return render_template("homepage.html")
+
     setup = Setup.query.filter_by(id=1).first()
     return render_template("setup.html", setup=setup)
 
@@ -91,7 +98,8 @@ def setup():
 @login_required
 def new():
     if not current_user.role == 'ADMIN':
-        return render_template("homepage.html")    
+        return render_template("homepage.html")
+
     return render_template('new.html')
 
 @view.route("/edit/<int:id>")
@@ -99,6 +107,7 @@ def new():
 def edit(id):
     if not current_user.role == 'ADMIN':
         return render_template("homepage.html")
+
     user = User.query.filter_by(id=id).first()
     return render_template("edit.html", user=user)
 
@@ -107,6 +116,7 @@ def edit(id):
 def remove(id):
     if not current_user.role == 'ADMIN':
         return render_template("homepage.html")
+
     user = User.query.filter_by(id=id).first()
     return render_template("remove.html", user=user)
 
@@ -134,6 +144,7 @@ def add_user():
         msg = "Failed to add user {}".format(username)
         flash(msg, category='danger')
         return redirect("/new")
+
     return redirect("/users")
 
 @view.route("/update_user", methods=["POST"])
@@ -163,6 +174,7 @@ def update_user():
         msg = "Failed to update user {}".format(oldUsername)
         flash(msg, category='danger')
         return redirect("/edit")
+
     return redirect("/users")
 
 @view.route("/delete", methods=["POST"])
@@ -178,6 +190,7 @@ def delete():
     except Exception as e:
         msg = "Failed to delete user {}".format(username)
         flash(msg, category='danger')
+
     return redirect("/users")
 
 @view.route("/save_setup", methods=["POST"])
@@ -207,86 +220,101 @@ def save_setup():
     except Exception as e:
         msg = "Failed to save setup"
         flash(msg, category='danger')
+
     return redirect("/setup")
 
-def execute_command(command, value): 
-    print('Command:{0} Value:{1}'.format(command, value))
-    if (command == 'CHANGE_STATUS'):
-        if (value == 'STOP'):
-            rover_controller.stopMotors()
-            rover_controller.rover.status = value
-        elif (value == 'FORWARD'):
-            rover_controller.stopMotors()
-            rover_controller.setLeftMotorsDirection(value)
-            rover_controller.setRightMotorsDirection(value)
-            rover_controller.startMotors()
-            rover_controller.rover.status = value
-        elif (value == 'BACKWARD'):
-            rover_controller.stopMotors() 
-            rover_controller.setLeftMotorsDirection(value)
-            rover_controller.setRightMotorsDirection(value)
-            rover_controller.startMotors()
-            rover_controller.rover.status = value
-        elif (value == 'CLOCKWISE'):
-            rover_controller.stopMotors() 
-            rover_controller.setLeftMotorsDirection('FORWARD')
-            rover_controller.setRightMotorsDirection('BACKWARD')
-            rover_controller.startMotors()
-            rover_controller.rover.status = value
-        elif (value == 'COUNTER-CLOCKWISE'):
-            rover_controller.stopMotors()
-            rover_controller.setLeftMotorsDirection('BACKWARD')
-            rover_controller.setRightMotorsDirection('FORWARD')
-            rover_controller.startMotors()
-            rover_controller.rover.status = value
-    elif (command == 'CHANGE_POWER'):
-        rover_controller.setPower(int(value))
-    else:
-        print('Unknown command')
-
-def startDaemon(interval):
-    global isDaemonStarted
+# Daemon to check client connection every 'interval' seconds, due to 'interval' setup value.
+def startCheckConnectionDaemon(interval):
+    global isCheckConnectionDaemonStarted
     
-    if isDaemonStarted:
+    if isCheckConnectionDaemonStarted:
         return
     
     if interval < 1:
-        print('Daemon not startable due to interval {0}s.'.format(interval))
+        log('CheckConnectionDaemon not startable due to interval value {0}s.'.format(interval))
         return 
 
     @copy_current_request_context
-    def daemonProcess(name, stop_event):
-        while not stop_event.is_set():
-            print('Checking client connection (every {0}s.)'.format(interval))
+    def daemonProcess(name, checkConnectionDaemonStopEvent):
+        while not checkConnectionDaemonStopEvent.is_set():
+            log('checking client connection (every {0}s.)'.format(interval))
             time.sleep(interval)
             if not rover_controller.rover.clientConnected:
-                print('Client connection lost')
+                log('client connection lost!')
                 rover_controller.stopMotors()
             rover_controller.rover.clientConnected = False
     
-    print('isDaemonStarted {0}'.format(isDaemonStarted))
+    log('isCheckConnectionDaemonStarted {0}'.format(isCheckConnectionDaemonStarted))
 
-    if not isDaemonStarted:
-        daemon.__init__(target=daemonProcess, args=('DaguRoverPi', stop_event), daemon=True)
+    if not isCheckConnectionDaemonStarted:
+        daemon.__init__(target=daemonProcess, args=('CheckConnectionDaemon', checkConnectionDaemonStopEvent), daemon=True)
         daemon.start()
-        isDaemonStarted = True
-        print('isDaemonStarted {0}'.format(isDaemonStarted))
+        isCheckConnectionDaemonStarted = True
+        log('isCheckConnectionDaemonStarted {0}'.format(isCheckConnectionDaemonStarted))
 
-def stopDaemon():
-    print('Stopping daemon...')
-    global isDaemonStarted
-    print('isDaemonStarted {0}'.format(isDaemonStarted))
-    if isDaemonStarted:
-        stop_event.set()
+def stopCheckConnectionDaemon():
+    log('Stopping CheckConnection daemon...')
+    global isCheckConnectionDaemonStarted
+    log('isCheckConnectionDaemonStarted {0}'.format(isCheckConnectionDaemonStarted))
+    if isCheckConnectionDaemonStarted:
+        checkConnectionDaemonStopEvent.set()
         daemon.join()
-        stop_event.clear()
-        isDaemonStarted = False
-        print('isDaemonStarted {0}'.format(isDaemonStarted))
+        checkConnectionDaemonStopEvent.clear()
+        isCheckConnectionDaemonStarted = False
+        log('isCheckConnectionDaemonStarted {0}'.format(isCheckConnectionDaemonStarted))
+
+# Daemon to get GPS position every 'interval' seconds, due to 'interval' setup value.
+def startGPSDaemon(interval):
+    global isGPSDaemonStarted
+    
+    if isGPSDaemonStarted:
+        return
+    
+    if interval < 1:
+        log('GPSDaemon not startable due to interval value {0}s.'.format(interval))
+        return 
+
+    @copy_current_request_context
+    def daemonProcess(name, GPSDaemonStopEvent):
+        while not GPSDaemonStopEvent.is_set():
+            log('Retrieve GPS position (every {0}s.)'.format(interval))
+            time.sleep(interval)
+            if not gps_controller.gps.online:
+                log('GPS position not available, GPSOnline={0}'.format(gps_controller.gps.online))
+            else :
+                log('GPSSatellites={0}'.format(gps_controller.gps.satellites))
+    
+    log('isGPSDaemonStarted {0}'.format(isGPSDaemonStarted))
+
+    if not isGPSDaemonStarted:
+        daemon.__init__(target=daemonProcess, args=('GPSDaemon', GPSDaemonStopEvent), daemon=True)
+        daemon.start()
+        isGPSDaemonStarted = True
+        gps_controller.gps.online = True
+        gps_controller.gpsStart()
+        log('isGPSDaemonStarted {0}'.format(isGPSDaemonStarted))
+
+def stopGPSDaemon():
+    log('Stopping GPS daemon...')
+    global isGPSDaemonStarted
+    log('isGPSDaemonStarted {0}'.format(isGPSDaemonStarted))
+    if isGPSDaemonStarted:
+        GPSDaemonStopEvent.set()
+        daemon.join()
+        GPSDaemonStopEvent.clear()
+        isGPSDaemonStarted = False
+        log('isGPSDaemonStarted {0}'.format(isGPSDaemonStarted))
 
 # Safe terminating
 def cleanUp():  
-    print('Safe terminating')
+    log('Safe terminating')
     rover_controller.cleanUp()
-    stopDaemon()
+    gps_controller.cleanUp()
+    stopCheckConnectionDaemon()
+    stopGPSDaemon()
 
 atexit.register(cleanUp)
+
+# print
+def log(msg):
+    print(msg)
