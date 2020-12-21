@@ -49,7 +49,7 @@ function keepAlive() {
                 // Schedule the next
             },
             error: function(error){
-                console.log(error);
+                //console.log(error);
             }
         });
         $("#divStatusId").load(" #divStatusId > *");
