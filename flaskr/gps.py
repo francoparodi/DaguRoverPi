@@ -1,5 +1,5 @@
 import sys
-import serial
+from serial import Serial
 import time
 
 class Gps():
@@ -35,8 +35,8 @@ class Gps():
     def gpsData(cls):
         try:
             port = "/dev/ttyAMA0"
-            data = serial.Serial(port, baudrate=9600, timeout=0.5)    
-        except(serial.SerialException):
+            data = Serial(port, baudrate=9600, timeout=0.5)    
+        except(Exception):
             # fake data
             time.sleep(2)
             data = "$GPGGA,181739.065,4535.920,N,00958.319,E,1,12,1.0,0.0,M,0.0,M,,*6B"

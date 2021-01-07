@@ -141,8 +141,8 @@ def add_user():
             user.enabled = 1
         db.session.add(user)
         db.session.commit()
-    except Exception as e:
-        msg = "Failed to add user {}".format(username)
+    except Exception:
+        msg = "Failed to add user {0}".format(username)
         flash(msg, category='danger')
         return redirect("/new")
 
@@ -171,8 +171,8 @@ def update_user():
         if enabled == 'on':
             user.enabled = 1
         db.session.commit()
-    except Exception as e:
-        msg = "Failed to update user {}".format(oldUsername)
+    except Exception:
+        msg = "Failed to update user {0}".format(oldUsername)
         flash(msg, category='danger')
         return redirect("/edit")
 
@@ -188,8 +188,8 @@ def delete():
         user = User.query.filter_by(username=username).first()
         db.session.delete(user)
         db.session.commit()
-    except Exception as e:
-        msg = "Failed to delete user {}".format(username)
+    except Exception:
+        msg = "Failed to delete user {0}".format(username)
         flash(msg, category='danger')
 
     return redirect("/users")
@@ -218,7 +218,7 @@ def save_setup():
         db.session.commit()
         msg = "Setup successfully saved"
         flash(msg, category='info')
-    except Exception as e:
+    except Exception:
         msg = "Failed to save setup"
         flash(msg, category='danger')
 
@@ -275,7 +275,7 @@ def startGPSDaemon():
     # Not started and not startable
     gps_interval = Setup.query.filter_by(id=1).first().gps_interval
     if gps_interval < 1:
-        log('GPSDaemon not startable due to interval value {0}}s.'.format(gps_interval))
+        log('GPSDaemon not startable due to interval value {0}s.'.format(gps_interval))
         return
 
     @copy_current_request_context
