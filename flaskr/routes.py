@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import current_user, login_user, logout_user, login_required
 
 from flaskr.forms import LoginForm
-from flaskr.models import db, User, Setup
+from flaskr.models import db, User, Setup, GpsData
 from flaskr.rover import Rover as rover
 from flaskr import rover_controller, gps_controller
 
@@ -224,6 +224,15 @@ def save_setup():
 
     return redirect("/setup")
 
+@view.route("/gpsdatalist")
+@login_required
+def gpsdatalist():
+    if not current_user.role == 'ADMIN':
+        return render_template("homepage.html")
+
+    gpsdatalist = GpsData.query.all()
+    return render_template("gpsdatalist.html", gpsdatalist=gpsdatalist)
+
 # Daemon to check client connection every 'interval' seconds, due to 'interval' setup value.
 def startCheckConnectionDaemon():
     global isCheckConnectionDaemonStarted
@@ -290,6 +299,10 @@ def startGPSDaemon():
             time.sleep(gps_interval)
             if not gps_controller.gps.online:
                 log('GPS position not available, GPSOnline: {0}'.format(gps_controller.gps.online))
+            else:
+                gps_store = Setup.query.filter_by(id=1).first().gps_store
+                if gps_store:
+                    storeGpsData()
     
     log('isGPSDaemonStarted: {0}'.format(isGPSDaemonStarted))
 
@@ -326,3 +339,16 @@ atexit.register(cleanUp)
 # print
 def log(msg):
     print(msg)
+
+def storeGpsData():
+    try:    
+        gpsData = GpsData()
+        gpsData.satellites = gps_controller.gps.satellites
+        gpsData.gps_quality = gps_controller.gps.gpsQuality
+        gpsData.altitude = gps_controller.gps.altitude
+        gpsData.latitude = gps_controller.gps.latitude
+        gpsData.longitude = gps_controller.gps.longitude
+        db.session.add(gpsData)
+        db.session.commit()
+    except Exception:
+        log('Failed to save gpsData')

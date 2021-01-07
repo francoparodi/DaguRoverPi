@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<script>
+    $(document).ready(function() {
+        $('#gpsdatalist_table').DataTable( {
+            "paging": true,
+            "ordering": true,
+            "info": false
+        });
+    } );
+</script>
+
+<div class="container text-center mt-3">
+    <div class="row no-gutters justify-content-center">
+        <div class="col-md-4">
+
+            <div class="container">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p style="color: #dc3545">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <table id="gpsdatalist_table" class="table table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">Lat</th>
+                        <th scope="col">Lon</th>
+                        <th scope="col">Alt</th>
+                        <th scope="col">Sat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for gpsdata in gpsdatalist %}
+                    <tr>
+                        <td>{{gpsdata.latitude}}</td>
+                        <td>{{gpsdata.longitude}}</td>
+                        <td>{{gpsdata.altitude}}</td>
+                        <td>{{gpsdata.satellites}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <a class="btn btn-primary" href="{{ url_for('view.homepage') }}" role="button">Back</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

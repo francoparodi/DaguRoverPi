@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from config import Config, Logger
-from flaskr.models import db, User, Setup
+from flaskr.models import db, User, Setup, GpsData
 from flaskr import create_app
 
 try:
@@ -50,12 +50,17 @@ try:
         db.session.add(u)
         
         # Setup
-        s = Setup(camera_ip='', gps_interval=0, gps_store=0, stop_on_lost_connection_interval=20, client_keepalive_interval=5 )
+        s = Setup(camera_ip='', gps_interval=0, gps_store=0, stop_on_lost_connection_interval=6, client_keepalive_interval=3 )
         db.session.add(s)
+
+        # GpsData
+        g = GpsData(satellites=0, gps_quality=0, altitude="", latitude="", longitude="")
+        db.session.add(g)
 
         message = '{0} Commit'.format(log_type)
         Logger.logger.debug(message)
         db.session.commit()
+        
 except Exception as e:
     message = '{0} Process aborted due to unexpected exception {1}'.format(log_type, e)
     Logger.logger.debug(message)

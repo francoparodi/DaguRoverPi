@@ -41,3 +41,15 @@ class Setup(db.Model):
 
     def __repr__(self):
         return f"Setup('{ self.id }', '{ self.created_at }', '{ self.camera_enabled }', '{ self.gps_interval }')"
+
+class GpsData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    satellites = db.Column(db.Integer, default=0)
+    gps_quality = db.Column(db.Integer, default=0)
+    altitude = db.Column(db.String(32), unique=False, default='')
+    latitude = db.Column(db.String(32), unique=False, default='')
+    longitude = db.Column(db.String(32), unique=False, default='')
+    
+    def __repr__(self):
+        return f"GpsData('{ self.id }', '{ self.created_at }', '{ self.satellites }', '{ self.gps_quality }', '{ self.altitude }', '{ self.latitude }', '{ self.longitude }' )"
