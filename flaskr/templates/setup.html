@@ -25,14 +25,14 @@
                         <input type="text" name="camera_ip" class="form-control" id="camera_ip" value="{{ setup.camera_ip }}" placeholder="http://localhost:8081">
                         <label for="gps_interval">GPS interval check (s.)</label>
                         <input type="number" name="gps_interval" class="form-control" id="gps_interval" value="{{ setup.gps_interval }}" placeholder="GPS interval (s.)">
+                        <label for="gps_store">Store GPS data limit (-1=no store) </label>
+                        <input type="number" name="gps_store" class="form-control" id="gps_store" value="{{ setup.gps_store }}">
+                        <label  for="url_geomap">URL to open geo coordinates</label>
+                        <input type="text" name="url_geomap" class="form-control" id="url_geomap" value="{{ setup.url_geomap }}" placeholder="http://maps.google.com/maps?q={0},{1}">
                         <label for="client_keepalive_interval">Keep-alive from client (s.)</label>
                         <input type="number" name="client_keepalive_interval" class="form-control" id="client_keepalive_interval" value="{{ setup.client_keepalive_interval }}">
                         <label for="stop_on_lost_connection_interval">Stop on lost connection after (s.)</label>
                         <input type="number" name="stop_on_lost_connection_interval" class="form-control" id="stop_on_lost_connection_interval" value="{{ setup.stop_on_lost_connection_interval }}">
-                    </div>
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" name="gps_store" id="gps_store" {% if setup.gps_store == 1 %} checked {% endif %}>
-                        <label class="custom-control-label" for="gps_store">GPS store </label>
                     </div>
                     <button type="submit" class="btn btn-primary">Save</button>
                     <a class="btn btn-primary" href="{{ url_for('view.homepage') }}" role="button">Back</a>

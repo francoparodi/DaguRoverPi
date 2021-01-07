@@ -35,12 +35,13 @@ class Setup(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now)
     camera_ip = db.Column(db.String(128), unique=False, default='')
     gps_interval = db.Column(db.Integer, default=0)
-    gps_store = db.Column(db.Boolean, default=False, unique=False, nullable=False)
+    gps_store = db.Column(db.Integer, default=-1)
     stop_on_lost_connection_interval = db.Column(db.Integer, default=0)
     client_keepalive_interval = db.Column(db.Integer, default=0)
+    url_geomap = db.Column(db.String(512), unique=False, default='')
 
     def __repr__(self):
-        return f"Setup('{ self.id }', '{ self.created_at }', '{ self.camera_enabled }', '{ self.gps_interval }')"
+        return f"Setup('{ self.id }', '{ self.created_at }', '{ self.camera_enabled }', '{ self.gps_interval }', '{ self.gps_store }')"
 
 class GpsData(db.Model):
     id = db.Column(db.Integer, primary_key=True)

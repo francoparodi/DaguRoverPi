@@ -202,6 +202,7 @@ def save_setup():
     try:
         camera_ip = request.form.get("camera_ip")
         gps_interval = request.form.get("gps_interval")
+        url_geomap = request.form.get("url_geomap")
         gps_store = request.form.get("gps_store")
         stop_on_lost_connection_interval = request.form.get("stop_on_lost_connection_interval")
         client_keepalive_interval = request.form.get("client_keepalive_interval")
@@ -209,9 +210,8 @@ def save_setup():
         setup = Setup.query.filter_by(id=1).first()
         setup.camera_ip = camera_ip
         setup.gps_interval = int(gps_interval)
-        setup.gps_store = 0
-        if gps_store == 'on':
-            setup.gps_store = 1
+        setup.gps_store = int(gps_store)
+        setup.url_geomap = url_geomap
         setup.stop_on_lost_connection_interval = int(stop_on_lost_connection_interval)
         setup.client_keepalive_interval = int(client_keepalive_interval)
 
@@ -314,8 +314,8 @@ def startGPSDaemon():
                 log('GPS position not available, GPSOnline: {0}'.format(gps_controller.gps.online))
             else:
                 gps_store = Setup.query.filter_by(id=1).first().gps_store
-                if gps_store:
-                    storeGpsData()
+                if gps_store > -1:
+                    storeGpsData(Setup)
     
     log('isGPSDaemonStarted: {0}'.format(isGPSDaemonStarted))
 
@@ -353,7 +353,7 @@ atexit.register(cleanUp)
 def log(msg):
     print(msg)
 
-def storeGpsData():
+def storeGpsData(setup):
     try:    
         gpsData = GpsData()
         gpsData.satellites = gps_controller.gps.satellites
@@ -363,7 +363,8 @@ def storeGpsData():
         gpsData.latitude = lat_lon_degree[0] + gps_controller.gps.latitude_dir 
         gpsData.longitude = lat_lon_degree[1] + gps_controller.gps.longitude_dir
         lat_lon_url = to_url(gps_controller.gps.latitude, gps_controller.gps.longitude)
-        gpsData.url = "http://maps.google.com/maps?q={0},{1}".format(lat_lon_url[0], lat_lon_url[1]) 
+        url_geomap = Setup.query.filter_by(id=1).first().url_geomap
+        gpsData.url = url_geomap.format(lat_lon_url[0], lat_lon_url[1]) 
         db.session.add(gpsData)
         db.session.commit()
     except Exception:
@@ -386,11 +387,11 @@ def to_url(lats, longs):
     lat_deg = lats[0:2]
     lat_mins = lats[2:4]
     lat_secs = round(float(lats[5:])*60/10000, 2)
-    lat_str = lat_deg + '.'+ lat_mins
+    lat_str = lat_deg + '.'+ lat_mins + str(lat_secs).replace(".","")
 
     lon_deg = longs[0:3]
     lon_mins = longs[3:5]
     lon_secs = round(float(longs[6:])*60/10000, 2)
-    lon_str = lon_deg + '.'+ lon_mins
+    lon_str = lon_deg + '.'+ lon_mins + str(lon_secs).replace(".","")
 
     return [lat_str, lon_str]

@@ -50,7 +50,7 @@ try:
         db.session.add(u)
         
         # Setup
-        s = Setup(camera_ip='', gps_interval=0, gps_store=0, stop_on_lost_connection_interval=6, client_keepalive_interval=3 )
+        s = Setup(camera_ip='', gps_interval=0, gps_store=-1, stop_on_lost_connection_interval=6, client_keepalive_interval=3, url_geomap='http://maps.google.com/maps?q={0},{1}' )
         db.session.add(s)
 
         # GpsData
