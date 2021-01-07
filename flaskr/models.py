@@ -50,6 +50,7 @@ class GpsData(db.Model):
     altitude = db.Column(db.String(32), unique=False, default='')
     latitude = db.Column(db.String(32), unique=False, default='')
     longitude = db.Column(db.String(32), unique=False, default='')
+    url = db.Column(db.String(512), unique=False, default='')
     
     def __repr__(self):
         return f"GpsData('{ self.id }', '{ self.created_at }', '{ self.satellites }', '{ self.gps_quality }', '{ self.altitude }', '{ self.latitude }', '{ self.longitude }' )"

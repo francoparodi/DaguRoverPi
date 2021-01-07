@@ -6,7 +6,8 @@
     $(document).ready(function() {
         $('#gpsdatalist_table').DataTable( {
             dom: 'Bftipr',
-            "pageLength": 8,
+            pageLength: 8,
+            order: [[ 0, 'des' ]],
             buttons: [ 'csv', 'pdf', 'copy' ]
         });
     } );
@@ -29,9 +30,10 @@
                 {% endwith %}
             </div>
 
-            <table id="gpsdatalist_table" class="table table-sm stats-table-smaller">
+            <table id="gpsdatalist_table" class="table table-sm">
                 <thead>
                     <tr>
+                        <th scope="col">id</th>
                         <th scope="col">Lat</th>
                         <th scope="col">Lon</th>
                         <th scope="col">Alt</th>
@@ -41,6 +43,7 @@
                 <tbody>
                 {% for gpsdata in gpsdatalist %}
                     <tr>
+                        <td><a href="{{gpsdata.url}}" target="_blank">{{gpsdata.id}}</a></td>
                         <td>{{gpsdata.latitude}}</td>
                         <td>{{gpsdata.longitude}}</td>
                         <td>{{gpsdata.altitude}}</td>

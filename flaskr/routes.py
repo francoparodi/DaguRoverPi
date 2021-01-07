@@ -1,4 +1,4 @@
-import atexit, threading, time
+import atexit, threading, time, string
 from flask import current_app as app
 
 from flask import Blueprint, render_template, redirect, url_for, flash, request, copy_current_request_context
@@ -359,9 +359,38 @@ def storeGpsData():
         gpsData.satellites = gps_controller.gps.satellites
         gpsData.gps_quality = gps_controller.gps.gpsQuality
         gpsData.altitude = gps_controller.gps.altitude
-        gpsData.latitude = gps_controller.gps.latitude
-        gpsData.longitude = gps_controller.gps.longitude
+        lat_lon_degree = to_degrees(gps_controller.gps.latitude, gps_controller.gps.longitude)
+        gpsData.latitude = lat_lon_degree[0] + gps_controller.gps.latitude_dir 
+        gpsData.longitude = lat_lon_degree[1] + gps_controller.gps.longitude_dir
+        lat_lon_url = to_url(gps_controller.gps.latitude, gps_controller.gps.longitude)
+        gpsData.url = "http://maps.google.com/maps?q={0},{1}".format(lat_lon_url[0], lat_lon_url[1]) 
         db.session.add(gpsData)
         db.session.commit()
     except Exception:
         log('Failed to save gpsData')
+
+def to_degrees(lats, longs):
+    lat_deg = lats[0:2]
+    lat_mins = lats[2:4]
+    lat_secs = round(float(lats[5:])*60/10000, 2)
+    lat_str = lat_deg + u'°'+ lat_mins + string.printable[68] + str(lat_secs) + string.printable[63]
+
+    lon_deg = longs[0:3]
+    lon_mins = longs[3:5]
+    lon_secs = round(float(longs[6:])*60/10000, 2)
+    lon_str = lon_deg + u'°'+ lon_mins + string.printable[68] + str(lon_secs) + string.printable[63]
+
+    return [lat_str, lon_str]
+
+def to_url(lats, longs):
+    lat_deg = lats[0:2]
+    lat_mins = lats[2:4]
+    lat_secs = round(float(lats[5:])*60/10000, 2)
+    lat_str = lat_deg + '.'+ lat_mins
+
+    lon_deg = longs[0:3]
+    lon_mins = longs[3:5]
+    lon_secs = round(float(longs[6:])*60/10000, 2)
+    lon_str = lon_deg + '.'+ lon_mins
+
+    return [lat_str, lon_str]

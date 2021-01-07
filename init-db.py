@@ -54,13 +54,13 @@ try:
         db.session.add(s)
 
         # GpsData
-        g = GpsData(satellites=0, gps_quality=0, altitude="", latitude="", longitude="")
+        g = GpsData(satellites=0, gps_quality=0, altitude="", latitude="", longitude="", url="")
         db.session.add(g)
 
         message = '{0} Commit'.format(log_type)
         Logger.logger.debug(message)
         db.session.commit()
-        
+
 except Exception as e:
     message = '{0} Process aborted due to unexpected exception {1}'.format(log_type, e)
     Logger.logger.debug(message)
