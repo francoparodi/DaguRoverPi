@@ -1,6 +1,7 @@
 import sys
 from serial import Serial
 import time
+import random
 
 class Gps():
 
@@ -29,16 +30,21 @@ class Gps():
     latitude = 0
     longitude = 0
     latitude_dir = 0
-    longitude_dir = 0  
+    longitude_dir = 0
+    fake_GPGGA_data = ("$GPGGA,181739.065,4535.920,N,00958.319,E,1,12,1.0,0.0,M,0.0,M,,*6B",
+    "$GPGGA,172814.0,3723.46587704,N,12202.26957864,W,2,6,1.2,18.893,M,-25.669,M,2.0,0031*4F",
+    "$GPGGA,001038.00,3334.2313457,N,11211.0576940,W,2,04,5.4,354.682,M,-26.574,M,7.0,0138*79",
+    "$GPGGA,115739.00,4158.8441367,N,09147.4416929,W,4,13,0.9,255.747,M,-32.00,M,01,0000*6E",
+    "$GPGGA,181908.00,3404.7041778,N,07044.3966270,W,4,13,1.00,495.144,M,29.200,M,0.10,0000*40")
 
     @classmethod
     def gpsData(cls):
         try:
-            port = "/dev/ttyAMA0"
-            data = Serial(port, baudrate=9600, timeout=0.5)    
+            data = Serial(Gps.port, Gps.baudrate, Gps.timeout)    
         except(Exception):
             # fake data
             time.sleep(2)
-            data = "$GPGGA,181739.065,4535.920,N,00958.319,E,1,12,1.0,0.0,M,0.0,M,,*6B"
+            index = random.randrange(0, 4, 1)
+            data = Gps.fake_GPGGA_data[index]
 
         return data
