@@ -233,6 +233,19 @@ def gpsdatalist():
     gpsdatalist = GpsData.query.all()
     return render_template("gpsdatalist.html", gpsdatalist=gpsdatalist)
 
+@view.route("/deleteGpsData")
+def deleteGpsData():
+    try:
+        db.session.query(GpsData).delete()
+        db.session.commit()
+        msg = "All GPS data successfully deleted"
+        flash(msg, category='info')
+    except Exception as e:
+        msg = "Failed to delete GPS data"
+        print(e)
+        flash(msg, category='danger')
+    return redirect("/gpsdatalist")
+
 # Daemon to check client connection every 'interval' seconds, due to 'interval' setup value.
 def startCheckConnectionDaemon():
     global isCheckConnectionDaemonStarted
