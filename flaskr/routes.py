@@ -268,12 +268,15 @@ def stopCheckConnectionDaemon():
 # Daemon to get GPS position every 'interval' seconds, due to 'interval' setup value.
 def startGPSDaemon():
     global isGPSDaemonStarted
-    
-    if isGPSDaemonStarted:
+    gps_interval = Setup.query.filter_by(id=1).first().gps_interval
+
+    # Started but need to stop due to setup settings
+    if isGPSDaemonStarted and gps_interval < 1:
+        log('Stop GPSDaemon due to interval value {0}s.'.format(gps_interval))
+        stopGPSDaemon()
         return
 
     # Not started and not startable
-    gps_interval = Setup.query.filter_by(id=1).first().gps_interval
     if gps_interval < 1:
         log('GPSDaemon not startable due to interval value {0}s.'.format(gps_interval))
         return
