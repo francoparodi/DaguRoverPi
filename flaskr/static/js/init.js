@@ -5,10 +5,9 @@ function sliderEvents(elementId, toUrl) {
                 url: toUrl,
                 data: $('form').serialize(),
                 success: function(response){
-                    //console.log(response);
                 },
                 complete: function (data) {
-                    $("#divStatusId").load(" #divStatusId > *");
+                    $("#divPowerId").load(" #divPowerId > *");
                 },
                 error: function(error){
                     console.log(error);
@@ -24,9 +23,10 @@ function buttonEvents(elementId, toUrl, command) {
                 url: toUrl,
                 data: 'command='+command,
                 success: function(response){
-                    //console.log(response);
+                    console.log('success');
                 },
                 complete: function (data) {
+                    console.log('complete');
                     $("#divStatusId").load(" #divStatusId > *");
                 },
                 error: function(error){
@@ -37,22 +37,22 @@ function buttonEvents(elementId, toUrl, command) {
 }
 
 function keepAlive() {
-    $.post({
-            type: 'POST',
-            url: '/clientConnected',
-            data: 'clientConnected=True',
-            dataType: 'json',
-            success: function (response) {
-                //console.log(response);   
-            },
-            complete: function (data) {
-                // Schedule the next
-            },
-            error: function(error){
-                //console.log(error);
-            }
+    $.post('/clientConnected', {
+            clientConnected: 'True'
+        }).done(function(data) {
+            $("#divConnectionId").removeClass('form-group hidden').addClass('form-group');
+            $("#divLostConnectionId").removeClass('form-group').addClass('form-group hidden');
+            $("#divGpsConnectionId").removeClass('form-group hidden').addClass('form-group');
+            $("#divGpsLostConnectionId").removeClass('form-group').addClass('form-group hidden');
+            $("#divStatusId").load(" #divStatusId > *");
+            $("#divGpsConnectionId").load(" #divGpsConnectionId > *");  
+        }).fail(function(data) {
+            $("#divConnectionId").removeClass('form-group').addClass('form-group hidden');
+            $("#divLostConnectionId").removeClass('form-group hidden').addClass('form-group');
+            $("#divGpsConnectionId").removeClass('form-group').addClass('form-group hidden');
+            $("#divGpsLostConnectionId").removeClass('form-group hidden').addClass('form-group');
+        }).always(function(data) {
         });
-        $("#divStatusId").load(" #divStatusId > *");
 }
 
 var intervalId;

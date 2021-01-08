@@ -25,8 +25,8 @@ rover_controller.gpioSetup()
 def clientConntected():
     if current_user.is_authenticated:
         setup = Setup.query.filter_by(id=1).first()
-        clientConntected = request.form.get('clientConnected')
-        if clientConntected == 'True' :
+        clientConnected = request.form.get('clientConnected')
+        if clientConnected == 'True' :
             log('Client status: connected (keep-alive received every {0}s.)'.format(setup.client_keepalive_interval))
             rover_controller.rover.clientConnected = True
         return render_template("homepage.html", user=current_user, setup=setup, rover_controller=rover_controller, gps_controller=gps_controller)
