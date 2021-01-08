@@ -315,7 +315,8 @@ def startGPSDaemon():
             else:
                 gps_store = Setup.query.filter_by(id=1).first().gps_store
                 if gps_store > -1:
-                    storeGpsData(Setup)
+                    url_geomap = Setup.query.filter_by(id=1).first().url_geomap
+                    storeGpsData(gps_store, url_geomap)
     
     log('isGPSDaemonStarted: {0}'.format(isGPSDaemonStarted))
 
@@ -353,7 +354,12 @@ atexit.register(cleanUp)
 def log(msg):
     print(msg)
 
-def storeGpsData(setup):
+def storeGpsData(gps_store, url_geomap):
+    # Clear data record if reached limits
+    num_record = GpsData.query.count()
+    if (gps_store < num_record):
+        deleteGpsData()
+    
     try:    
         gpsData = GpsData()
         gpsData.satellites = gps_controller.gps.satellites
@@ -363,7 +369,7 @@ def storeGpsData(setup):
         gpsData.latitude = lat_lon_degree[0] + gps_controller.gps.latitude_dir 
         gpsData.longitude = lat_lon_degree[1] + gps_controller.gps.longitude_dir
         lat_lon_url = to_url(gps_controller.gps.latitude, gps_controller.gps.longitude)
-        url_geomap = Setup.query.filter_by(id=1).first().url_geomap
+        url_geomap = url_geomap
         gpsData.url = url_geomap.format(lat_lon_url[0], lat_lon_url[1]) 
         db.session.add(gpsData)
         db.session.commit()

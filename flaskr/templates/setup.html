@@ -23,7 +23,7 @@
                     <div class="form-group">
                         <label  for="camera_ip">Camera IP address</label>
                         <input type="text" name="camera_ip" class="form-control" id="camera_ip" value="{{ setup.camera_ip }}" placeholder="http://localhost:8081">
-                        <label for="gps_interval">GPS interval check (s.)</label>
+                        <label for="gps_interval">GPS interval (sec.) track (-1=no track)</label>
                         <input type="number" name="gps_interval" class="form-control" id="gps_interval" value="{{ setup.gps_interval }}" placeholder="GPS interval (s.)">
                         <label for="gps_store">Store GPS data limit (-1=no store) </label>
                         <input type="number" name="gps_store" class="form-control" id="gps_store" value="{{ setup.gps_store }}">
