@@ -9,6 +9,7 @@ class Gps():
     try:
         import RPi.GPIO as GPIO
     except (RuntimeError, ModuleNotFoundError):
+        print('error on import RPi.GPIO, use fake_rpi')
         import fake_rpi
         GPIO = fake_rpi.RPi.GPIO
         sys.modules['RPi'] = fake_rpi.RPi
@@ -41,11 +42,12 @@ class Gps():
     def gpsData(cls):
         try:
             serialData = Serial(Gps.port, Gps.baudrate, Gps.timeout)    
-            gpsData = serialData.readline().decode('ascii', errors='replace')
-        except(Exception):
+            data = serialData.readline().decode('ascii', errors='replace')
+        except Exception as e:
             # fake data
+            print('exception  ' + str(e) + ' on reading GPS data, use fake data')
             time.sleep(2)
             index = random.randrange(0, 4, 1)
-            gpsData = Gps.fake_GPGGA_data[index]
+            data = Gps.fake_GPGGA_data[index]
 
-        return gpsData
+        return data
