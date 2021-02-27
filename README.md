@@ -1,6 +1,9 @@
 # DaguRoverPi
 
-Java to Python porting of project [RaspDaguRover](https://github.com/francoparodi/RaspiDaguRover) 
+Java to Python porting of project [RaspDaguRover](https://github.com/francoparodi/RaspiDaguRover) with some important improvements as:
+* Users handling (stored in SQLlite DB)
+* GPS support and GEO data (stored in SQLlite DB)
+* Ultrasonic sensor to avoid collisions (automatically stop)
 
 ## Prerequisites
 [Motion](https://motion-project.github.io/) software to be able to stream camera content. 
