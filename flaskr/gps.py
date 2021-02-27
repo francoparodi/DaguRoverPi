@@ -16,7 +16,7 @@ class Gps():
         sys.modules['smbus'] = fake_rpi.smbus
         sys.modules['serial'] = fake_rpi.serial
     
-    gpsTXD = 15 # GPIO15, pin10 Violet
+    gpsTXD = 15 # GPIO15, pin10, RXD0
     gpsRXD = None # Not required
     online = True
     port = "/dev/ttyAMA0"

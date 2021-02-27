@@ -6,9 +6,13 @@ Java to Python porting of project [RaspDaguRover](https://github.com/francoparod
 
 
 ## Prerequisites
-[Motion](https://motion-project.github.io/) 3rd party software to stream camera content. 
+* [Motion](https://motion-project.github.io/) 3rd party software to stream camera content, and the camera module. 
+
+* GPS Module NEO6M. 
 
 **Quick start** (maybe on Debian-like distro):
+
+***Motion***
 
 installation:
 ```sh
@@ -31,6 +35,70 @@ tail -f /var/log/motion
 ```
 
 Look for motion_sample.conf in this project.
+
+***GPS NEO6M Module***
+
+Append to /boot/config.txt following code lines:
+
+```sh
+dtparam=spi=on
+dtoverlay=pi3-disable-bt
+core_freq=250
+enable_uart=1
+force_turbo=1
+```
+
+Modify /boot/cmdline.txt to turn off UART as a serial console (due Raspbian behaviour):
+```sh
+sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
+sudo nano /boot/cmdline.txt
+```
+
+WARNING: replace content of cmdline.txt with following but **don't change** old "root" (/dev value) value:
+```sh
+dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait quiet splash plymouth.ignore-serial-consoles
+```
+
+reboot
+
+Wait some minute to blue led blinking on GPS Module, the run:
+
+```sh
+sudo cat /dev/ttyAMA0
+
+```
+and verify data.
+
+Now, found which port point to serial port:
+```sh
+ls -l /dev
+```
+
+if output is:
+```sh
+serial0 -> ttyAMA0
+serial1 -> ttyS0
+```
+
+we need to execute:
+```sh
+sudo systemctl stop serial-getty@ttyAMA0.service
+sudo systemctl disable serial-getty@ttyAMA0.service
+```
+
+otherwise if output is:
+```sh
+serial0 -> ttyS0
+serial1 -> ttyAMA0
+```
+
+we need to execute:
+```sh
+sudo systemctl stop serial-getty@ttyS0.service
+sudo systemctl disable serial-getty@ttyS0.service
+```
+
+To test GPS hardware is properly working, run script 'gps_hw_test.py'.
 
 ## Installing
 
