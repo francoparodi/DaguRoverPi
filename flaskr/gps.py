@@ -20,9 +20,6 @@ class Gps():
     gpsTXD = 15 # GPIO15, pin10, RXD0
     gpsRXD = None # Not required
     online = True
-    port = "/dev/ttyAMA0"
-    baudrate = 9600
-    timeout = 0.5
     timestamp = 0
     satellites = 0
     gpsQuality = 0
@@ -41,7 +38,7 @@ class Gps():
     @classmethod
     def gpsData(cls):
         try:
-            serialData = Serial(Gps.port, Gps.baudrate, Gps.timeout)    
+            serialData = Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=0.5)    
             data = serialData.readline().decode('ascii', errors='replace')
         except Exception as e:
             # fake data
