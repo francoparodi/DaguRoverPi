@@ -22,6 +22,7 @@ view = Blueprint("view", __name__)
 rover_controller.gpioSetup()
 
 @view.route("/clientConnected", methods=["GET", "POST"])
+# end-point called by js post client
 def clientConntected():
     if current_user.is_authenticated:
         setup = Setup.query.filter_by(id=1).first()
