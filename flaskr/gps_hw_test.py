@@ -3,9 +3,8 @@ import time
 import string
 import pynmea2
 
-port="/dev/ttyAMA0"
 while True:
-    data = serial.Serial(port, baudrate=9600, timeout=0.5)
+    data = serial.Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=0.5)
     newdata = data.readline().decode('ascii', errors='replace')
     if "GPGGA" in newdata:
         nmeaObj = pynmea2.parse(newdata)
