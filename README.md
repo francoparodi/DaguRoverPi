@@ -98,7 +98,18 @@ sudo systemctl stop serial-getty@ttyS0.service
 sudo systemctl disable serial-getty@ttyS0.service
 ```
 
-To test GPS hardware is properly working, run script 'gps_hw_test.py'.
+To test GPS hardware is properly working, run script 'gps_hw_test.py', it should show something like:
+```sh
+(venv) pi@raspberrypi:~/DaguRoverPi/flaskr $ python3 gps_hw_test.py 
+Time=18:22:35 Satellites=06 GPSQuality=1 Altitude=256.5M Latitude=N,4536.22335 Longitude=E,00957.96886
+Time=18:22:36 Satellites=06 GPSQuality=1 Altitude=256.5M Latitude=N,4536.22331 Longitude=E,00957.96868
+Time=18:22:37 Satellites=06 GPSQuality=1 Altitude=256.5M Latitude=N,4536.22329 Longitude=E,00957.96858
+Time=18:22:38 Satellites=06 GPSQuality=1 Altitude=256.4M Latitude=N,4536.22328 Longitude=E,00957.96857
+Time=18:22:39 Satellites=06 GPSQuality=1 Altitude=256.3M Latitude=N,4536.22330 Longitude=E,00957.96862
+Time=18:22:40 Satellites=06 GPSQuality=1 Altitude=256.2M Latitude=N,4536.22334 Longitude=E,00957.96867
+Time=18:22:41 Satellites=06 GPSQuality=1 Altitude=255.9M Latitude=N,4536.22340 Longitude=E,00957.96875
+Time=18:22:42 Satellites=06 GPSQuality=1 Altitude=255.7M Latitude=N,4536.22345 Longitude=E,00957.96885
+```
 
 ## Installing
 
