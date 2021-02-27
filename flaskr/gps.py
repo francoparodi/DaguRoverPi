@@ -40,11 +40,12 @@ class Gps():
     @classmethod
     def gpsData(cls):
         try:
-            data = Serial(Gps.port, Gps.baudrate, Gps.timeout)    
+            serialData = Serial(Gps.port, Gps.baudrate, Gps.timeout)    
+            gpsData = serialData.readline().decode('ascii', errors='replace')
         except(Exception):
             # fake data
             time.sleep(2)
             index = random.randrange(0, 4, 1)
-            data = Gps.fake_GPGGA_data[index]
+            gpsData = Gps.fake_GPGGA_data[index]
 
-        return data
+        return gpsData
