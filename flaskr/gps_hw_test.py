@@ -5,6 +5,17 @@ import pynmea2
 
 serialPort = serial.Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=0.5)
 
+def to_degrees(lat, lon):
+    lat_deg = lat[0:2]
+    lat_mins = lat[2:]
+    latitude = lat_deg + (lat_mins/60)
+
+    lon_deg = lon[0:3]
+    lon_mins = lon[3:]
+    longitude = lon_deg + (lon_mins/60)
+
+    return [latitude, longitude]
+
 while True:
     gps_data = serialPort.readline().decode('ascii', errors='ignore')
 
@@ -23,14 +34,3 @@ while True:
         print('Time={0} Satellites={1} GPSQuality={2} Altitude={3}{4} Latitude={5},{6} Longitude={7},{8}'.format(time, satellites, gpsQuality, altitude, altitudeUm, latitude_dir, latitude, longitude_dir, longitude))
 
         print('Lat-Lon to dec:' + to_degrees(latitude, longitude)) 
-
-def to_degrees(lat, lon):
-    lat_deg = lat[0:2]
-    lat_mins = lat[2:]
-    latitude = lat_deg + (lat_mins/60)
-
-    lon_deg = lon[0:3]
-    lon_mins = lon[3:]
-    longitude = lon_deg + (lon_mins/60)
-
-    return [latitude, longitude]
