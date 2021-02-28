@@ -5,9 +5,13 @@ import pynmea2
 
 while True:
     data = serial.Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=0.5)
-    newdata = data.readline().decode('ascii', errors='replace')
-    if "GPGGA" in newdata:
-        nmeaObj = pynmea2.parse(newdata)
+    print('data is ' + str(data))
+    gps_data = data.readline().decode('ascii', errors='replace')
+    print('gps_data is ' + str(gps_data))
+
+    if "GPGGA" in gps_data:
+        print('found GPGGA in gps_data ')
+        nmeaObj = pynmea2.parse(gps_data)
         time = nmeaObj.timestamp
         satellites = nmeaObj.num_sats
         gpsQuality = nmeaObj.gps_qual

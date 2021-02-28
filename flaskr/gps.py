@@ -1,6 +1,7 @@
 import sys
 import serial
 import time
+import string
 import random
 
 class Gps():
@@ -39,12 +40,14 @@ class Gps():
     def gpsData(cls):
         try:            
             data = serial.Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=0.5)
-            newdata = data.readline().decode('ascii', errors='replace')
+            print('data is ' + str(data))
+            gps_data = data.readline().decode('ascii', errors='replace')
+            print('gps_data is ' + str(gps_data))
         except Exception as e:
             # fake data
             print('exception  ' + str(e) + ' on reading GPS data, use fake data')
             time.sleep(2)
             index = random.randrange(0, 4, 1)
-            newdata = Gps.fake_GPGGA_data[index]
+            gps_data = Gps.fake_GPGGA_data[index]
 
-        return newdata
+        return gps_data
