@@ -6,7 +6,8 @@ import pynmea2
 while True:
     data = serial.Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=0.5)
     print('data is ' + str(data))
-    gps_data = data.readline().decode('ascii', errors='replace')
+    #gps_data = data.readline().decode('ascii', errors='replace')
+    gps_data = data.readline().decode("utf-8")
     print('gps_data is ' + str(gps_data))
 
     if "GPGGA" in gps_data:
