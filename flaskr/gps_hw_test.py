@@ -8,7 +8,7 @@ while True:
     #gps_data = data.readline().decode('ascii', errors='replace')
     gps_data = data.readline()
 
-    if "GGA" in gps_data:
+    if gps_data.find('GGA')>0 :
         print('found GGA in gps_data ')
         nmeaObj = pynmea2.parse(gps_data)
         time = nmeaObj.timestamp
