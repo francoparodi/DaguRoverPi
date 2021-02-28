@@ -8,11 +8,11 @@ serialPort = serial.Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=0.5)
 def to_degrees(lat, lon):
     lat_deg = lat[0:2]
     lat_mins = lat[2:]
-    latitude = lat_deg + (float(lat_mins)/60)
+    latitude = float(lat_deg) + (float(lat_mins)/60)
 
     lon_deg = lon[0:3]
     lon_mins = lon[3:]
-    longitude = lon_deg + (float(lon_mins)/60)
+    longitude = float(lon_deg) + (float(lon_mins)/60)
 
     return [latitude, longitude]
 
