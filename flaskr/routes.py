@@ -367,13 +367,13 @@ def storeGpsData(gps_store, url_geomap):
         gpsData.gps_quality = gps_controller.gps.gpsQuality
         gpsData.altitude = gps_controller.gps.altitude
         lat_lon_degree = to_degrees(gps_controller.gps.latitude, gps_controller.gps.longitude)
-        gpsData.latitude = lat_lon_degree[0] + gps_controller.gps.latitude_dir 
-        gpsData.longitude = lat_lon_degree[1] + gps_controller.gps.longitude_dir
-        gpsData.url = url_geomap.format(lat_lon_degree[0], lat_lon_degree[1]) 
+        gpsData.latitude = str(lat_lon_degree[0]) + ' ' + gps_controller.gps.latitude_dir 
+        gpsData.longitude = str(lat_lon_degree[1]) + ' ' + gps_controller.gps.longitude_dir
+        gpsData.url = url_geomap.format(str(lat_lon_degree[0]), str(lat_lon_degree[1])) 
         db.session.add(gpsData)
         db.session.commit()
-    except Exception:
-        log('Failed to save gpsData')
+    except Exception as e:
+        log('Failed to save gpsData, error ' + str(e))
 
 def to_degrees(lat, lon):
     lat_deg = lat[0:2]
