@@ -384,4 +384,4 @@ def to_degrees(lat, lon):
     lon_mins = lon[3:]
     longitude = float(lon_deg) + (float(lon_mins)/60)
 
-    return [latitude, longitude
+    return [latitude, longitude]
