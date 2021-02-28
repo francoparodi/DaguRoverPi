@@ -369,36 +369,19 @@ def storeGpsData(gps_store, url_geomap):
         lat_lon_degree = to_degrees(gps_controller.gps.latitude, gps_controller.gps.longitude)
         gpsData.latitude = lat_lon_degree[0] + gps_controller.gps.latitude_dir 
         gpsData.longitude = lat_lon_degree[1] + gps_controller.gps.longitude_dir
-        lat_lon_url = to_url(gps_controller.gps.latitude, gps_controller.gps.longitude)
-        url_geomap = url_geomap
-        gpsData.url = url_geomap.format(lat_lon_url[0], lat_lon_url[1]) 
+        gpsData.url = url_geomap.format(lat_lon_degree[0], lat_lon_degree[1]) 
         db.session.add(gpsData)
         db.session.commit()
     except Exception:
         log('Failed to save gpsData')
 
-def to_degrees(lats, longs):
-    lat_deg = lats[0:2]
-    lat_mins = lats[2:4]
-    lat_secs = round(float(lats[5:])*60/10000, 2)
-    lat_str = lat_deg + u'°'+ lat_mins + string.printable[68] + str(lat_secs) + string.printable[63]
+def to_degrees(lat, lon):
+    lat_deg = lat[0:2]
+    lat_mins = lat[2:]
+    latitude = float(lat_deg) + (float(lat_mins)/60)
 
-    lon_deg = longs[0:3]
-    lon_mins = longs[3:5]
-    lon_secs = round(float(longs[6:])*60/10000, 2)
-    lon_str = lon_deg + u'°'+ lon_mins + string.printable[68] + str(lon_secs) + string.printable[63]
+    lon_deg = lon[0:3]
+    lon_mins = lon[3:]
+    longitude = float(lon_deg) + (float(lon_mins)/60)
 
-    return [lat_str, lon_str]
-
-def to_url(lats, longs):
-    lat_deg = lats[0:2]
-    lat_mins = lats[2:4]
-    lat_secs = round(float(lats[5:])*60/10000, 2)
-    lat_str = lat_deg + '.'+ lat_mins + str(lat_secs).replace(".","")
-
-    lon_deg = longs[0:3]
-    lon_mins = longs[3:5]
-    lon_secs = round(float(longs[6:])*60/10000, 2)
-    lon_str = lon_deg + '.'+ lon_mins + str(lon_secs).replace(".","")
-
-    return [lat_str, lon_str]
+    return [latitude, longitude
