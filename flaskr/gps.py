@@ -35,14 +35,12 @@ class Gps():
     "GPGGA,001038.00,3334.2313457,N,11211.0576940,W,2,04,5.4,354.682,M,-26.574,M,7.0,0138*79",
     "GPGGA,115739.00,4158.8441367,N,09147.4416929,W,4,13,0.9,255.747,M,-32.00,M,01,0000*6E",
     "GPGGA,181908.00,3404.7041778,N,07044.3966270,W,4,13,1.00,495.144,M,29.200,M,0.10,0000*40")
+    serialPort = serial.Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=0.5)
 
     @classmethod
     def gpsData(cls):
         try:            
-            data = serial.Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=0.5)
-            print('data is ' + str(data))
-            gps_data = data.readline().decode('ascii', errors='replace')
-            print('gps_data is ' + str(gps_data))
+            gps_data = serialPort.readline().decode('ascii', errors='replace')
         except Exception as e:
             # fake data
             print('exception  ' + str(e) + ' on reading GPS data, use fake data')

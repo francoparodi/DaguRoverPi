@@ -3,12 +3,13 @@ import time
 import string
 import pynmea2
 
-while True:
-    data = serial.Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=2.0)
-    #gps_data = data.readline().decode('ascii', errors='replace')
-    gps_data = data.readline()
+serialPort = serial.Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=0.5)
 
-    if gps_data.find('GGA')>0 :
+while True:
+    #gps_data = data.readline().decode('ascii', errors='replace')
+    gps_data = serialPort.readline()
+
+    if gps_data.find('GGA') > 0:
         print('found GGA in gps_data ')
         nmeaObj = pynmea2.parse(gps_data)
         time = nmeaObj.timestamp
