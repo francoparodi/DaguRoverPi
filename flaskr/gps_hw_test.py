@@ -21,3 +21,16 @@ while True:
         latitude_dir = nmeaObj.lat_dir
         longitude_dir = nmeaObj.lon_dir
         print('Time={0} Satellites={1} GPSQuality={2} Altitude={3}{4} Latitude={5},{6} Longitude={7},{8}'.format(time, satellites, gpsQuality, altitude, altitudeUm, latitude_dir, latitude, longitude_dir, longitude))
+
+        print('Lat-Lon to dec:' + to_degrees(latitude, longitude)) 
+
+def to_degrees(lat, lon):
+    lat_deg = lat[0:2]
+    lat_mins = lat[2:]
+    latitude = lat_deg + (lat_mins/60)
+
+    lon_deg = lon[0:3]
+    lon_mins = lon[3:]
+    longitude = lon_deg + (lon_mins/60)
+
+    return [latitude, longitude]
