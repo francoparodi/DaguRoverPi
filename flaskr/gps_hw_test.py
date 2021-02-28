@@ -4,9 +4,11 @@ import string
 import pynmea2
 
 while True:
-    data = serial.Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=0.5)
+    data = serial.Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=2.0)
     print('data is ' + str(data))
     #gps_data = data.readline().decode('ascii', errors='replace')
+    while data.read().decode("utf-8") != '$': # Wait for the begging of the string
+        pass # Do nothing
     gps_data = data.readline().decode("utf-8")
     print('gps_data is ' + str(gps_data))
 
