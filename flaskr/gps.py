@@ -40,7 +40,7 @@ class Gps():
     @classmethod
     def gpsData(cls):
         try:            
-            gps_data = serialPort.readline().decode('ascii', errors='replace')
+            gps_data = Gps.serialPort.readline().decode('ascii', errors='ignore')
         except Exception as e:
             # fake data
             print('exception  ' + str(e) + ' on reading GPS data, use fake data')

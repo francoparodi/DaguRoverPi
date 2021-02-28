@@ -6,7 +6,6 @@ import pynmea2
 serialPort = serial.Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=0.5)
 
 while True:
-    #gps_data = data.readline().decode('ascii', errors='replace')
     gps_data = serialPort.readline().decode('ascii', errors='ignore')
 
     if gps_data.find('GGA') > 0:

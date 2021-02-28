@@ -4,8 +4,7 @@ from flaskr.gps import Gps as gps
 def gpsGetGPGGA():
     while gps.online:
         gps_data = gps.gpsData()
-        print('gps_data is ' + str(gps_data))
-        if "GPGGA" in gps_data:
+        if gps_data.find('GGA') > 0:
             nmeaObj = pynmea2.parse(gps_data)
             gps.timestamp = nmeaObj.timestamp
             gps.satellites = nmeaObj.num_sats
