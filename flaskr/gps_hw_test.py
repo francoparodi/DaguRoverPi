@@ -7,13 +7,11 @@ while True:
     data = serial.Serial(port='/dev/ttyAMA0', baudrate=9600, timeout=2.0)
     print('data is ' + str(data))
     #gps_data = data.readline().decode('ascii', errors='replace')
-    while data.read().decode("utf-8") != '$': # Wait for the begging of the string
-        pass # Do nothing
-    gps_data = data.readline().decode("utf-8")
+    gps_data = data.readline()
     print('gps_data is ' + str(gps_data))
 
-    if "GPGGA" in gps_data:
-        print('found GPGGA in gps_data ')
+    if "GGA" in gps_data:
+        print('found GGA in gps_data ')
         nmeaObj = pynmea2.parse(gps_data)
         time = nmeaObj.timestamp
         satellites = nmeaObj.num_sats
