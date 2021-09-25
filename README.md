@@ -6,6 +6,9 @@ Python/Flask porting (during my free time) of one of my old java/JSF2 project [R
 
 ![dagu_rover_main](docs/img/dagu_rover_main.jpg)
 
+* **Demo**
+![video](docs/img/video.gif)
+
 The user (after login) can control rover movements, see environment via camera, switch on/off frontal lamp.
 
 * **Login**
