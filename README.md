@@ -199,14 +199,19 @@ Init DB process will create two users:
 
 ## Running
 
-__as app__
+__remember to run motion to stream cam data:__
+```sh
+sudo motion &
+```
+
+__run as app:__
 
 ```sh
 export FLASK_APP=flaskr
 flask run
 ```
 
-__as wsgi server__
+__run as wsgi server:__
 
 ```sh
 waitress-serve --host localhost --port 8080 --call 'flaskr:create_app'
