@@ -8,9 +8,20 @@ Python/Flask porting (during my free time) of one of my old java/JSF2 project [R
 
 The user (after login) can control rover movements, see environment via camera, switch on/off frontal lamp.
 
+* **Login**
 ![login](docs/img/login.png)
 
+* **Cockpit**
 ![cockpit](docs/img/cockpit.png)
+
+* **Users handling**
+![users](docs/img/users.png)
+
+* **Settings**
+![settings](docs/img/settings.png)
+
+* **GPS data**
+![GPS data](docs/img/gps_data.png)
 
 Lost connection will stop rover.
 
