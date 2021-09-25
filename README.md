@@ -1,9 +1,69 @@
 # DaguRoverPi
 
-Java to Python porting of project [RaspDaguRover](https://github.com/francoparodi/RaspiDaguRover) with some important improvements as:
+Python/Flask porting (during my free time) of one of my old java/JSF2 project [RaspDaguRover](https://github.com/francoparodi/RaspiDaguRover) with some improvements as:
 * Users handling (stored in SQLlite DB)
 * GPS support and GEO data (stored in SQLlite DB)
 
+![dagu_rover_main](docs/img/dagu_rover_main.jpg)
+
+The user (after login) can control rover movements, see environment via camera, switch on/off frontal lamp.
+
+![login](docs/img/login.png)
+
+![cockpit](docs/img/cockpit.png)
+
+Lost connection will stop rover.
+
+List of materials used to develop this rover solution:
+
+* **Pololu Dagu Rover (with 4 motors)**
+![pololu_dagu_rover](docs/img/pololu_dagu_rover.jpg)
+
+* **Food tapperware**
+![food_tapperware](docs/img/food_tapperware.jpg)
+
+* **Raspberry Pi 3 B Model**
+![raspberry_pi_3](docs/img/raspberry_pi_3_B.jpg)
+
+* **Raspberry Pi Camera V2.1**
+![raspberry_pi_camera_v21](docs/img/raspberry_pi_camera_v21.jpeg)
+
+* **Raspberry Pi Camera case**
+![raspberry_pi_camera_case](docs/img/raspberry_pi_camera_case.jpg)
+
+* **Raspberry supply battery (10000mAh Powerbank)**
+![raspberry_pi_supply_battery](docs/img/raspberry_pi_supply_battery.jpg)
+
+* **Raspberry switch**
+![raspberry_switch](docs/img/raspberry_switch.jpg)
+
+
+* **Motors supply battery (5000mAh LiPo battery)**
+![motors_supply_battery](docs/img/motors_supply_battery.jpg)
+
+* **4-Channel Motors controller circuit**
+![4ch_motor_controller](docs/img/4ch_motor_controller.jpg)
+
+* **Motors power switch**
+![motors_switch](docs/img/motors_switch.jpg)
+
+* **Frontal lamp with 3-AAA supply battery**
+![frontal_lamp](docs/img/frontal_lamp.jpg)
+
+* **Relè to power on-off frontal lamp**
+![raspberry_pi_relay](docs/img/raspberry_pi_relay.jpg)
+
+* **GPS Module**
+![raspberry_pi_relay](docs/img/gps_module.jpg)
+
+**Connection schema**
+![connection_schema](docs/img/connection_schema.jpg)
+
+![lamp](docs/img/lamp.jpg)
+
+![lamp_tapperware](docs/img/lamp_tapperware.jpg)
+
+![top](docs/img/top.jpg)
 
 ## Prerequisites
 * [Motion](https://motion-project.github.io/) 3rd party software to stream camera content, and the camera module. 
@@ -150,8 +210,12 @@ gunicorn --worker-class eventlet -w 1 -b localhost:8080 wsgi
 As seen above (gunicorn, waitress...)
 
 ## TODO:
-* [ ] lamp
-* [ ] IRsensor to avoid obstacles.
+* [ ] Allow lamp to be switched on/off.
+* [ ] IRsensor to automatically avoid obstacles.
+* [ ] Use only one LiPo battery for both Raspberry and motors (introduce 7V to 5V voltage converter).
+* [ ] Improve aquiring satellites speed.
+* [ ] Add night vision camera.
+* [ ] Update/Re-Design connection schema.
 
 ## Authors 
 
